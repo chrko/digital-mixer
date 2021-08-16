@@ -1,7 +1,6 @@
 import threading
 from queue import SimpleQueue
 
-import mido.messages.messages
 import rtmidi
 from mido.messages import Message
 
@@ -33,10 +32,10 @@ class RtMidiJackIO:
         except ValueError:
             pass
 
-    def receive(self) -> mido.messages.Message:
+    def receive(self) -> Message:
         return self._msg_queue_in.get()
 
-    def send(self, msg: mido.messages.Message):
+    def send(self, msg: Message):
         with self._send_lock:
             self._out_client.send_message(msg.bytes())
 
