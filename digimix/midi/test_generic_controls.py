@@ -1,6 +1,7 @@
+import time
 from fractions import Fraction
 
-from digimix.midi.generic_controls import ContinuousControlReadOnly
+from digimix.midi.generic_controls import Button, ContinuousControlReadOnly
 
 
 class TestContinuousControlReadOnly:
@@ -51,3 +52,53 @@ class TestContinuousControlReadOnly:
         assert cc.mapped_value == Fraction(-1, 127)
         cc.value = 127
         assert cc.mapped_value == 1
+
+
+class TestButton:
+    def test_mode_momentary(self):
+        b = Button(mode=Button.Mode.MOMENTARY)
+        assert b.state == 'released'
+        b.press()
+        assert b.state == 'pressed'
+        b.release()
+        assert b.state == 'released'
+
+    def test_mode_toggle(self):
+        b = Button(mode=Button.Mode.TOGGLE)
+        assert not b.pressed
+        assert not b.active
+
+        self.check_button_toggling(b)
+
+    def test_mode_timed_toggle(self):
+        b = Button(mode=Button.Mode.TIMED_TOGGLE)
+        assert not b.pressed
+        assert not b.active
+
+        # Long press, momentary
+        b.press()
+        assert b.pressed
+        assert b.active
+
+        time.sleep(1)
+        b.release()
+        assert not b.pressed
+        assert not b.active
+
+        self.check_button_toggling(b)
+
+    @staticmethod
+    def check_button_toggling(b):
+        b.press()
+        assert b.pressed
+        assert b.active
+        b.release()
+        assert not b.pressed
+        assert b.active
+
+        b.press()
+        assert b.pressed
+        assert not b.active
+        b.release()
+        assert not b.pressed
+        assert not b.active
