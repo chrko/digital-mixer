@@ -91,6 +91,7 @@ class MidiMix:
                 buttons[col * 3 + 2],
                 ccs[col * 4 + 3],
             )
+            col += 1
             channel[0].name = f'Knob_ch{col}_1'
             channel[1].name = f'Knob_ch{col}_2'
             channel[2].name = f'Knob_ch{col}_3'
@@ -106,7 +107,7 @@ class MidiMix:
                 partial_msg_dict={
                     'type': 'control_change',
                     'channel': 0,
-                    'control': 16 + i
+                    'control': 16 + i if i <= 15 else 30 + i
                 },
                 callback=cc.midi_message_extractor
             )
