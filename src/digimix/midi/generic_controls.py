@@ -66,6 +66,7 @@ class ContinuousControlReadOnly(CallbackBase):
             if self._behaviour is self.Behaviour.PICK_UP:
                 if not (abs(self._value - new_value) <= self.PICK_UP_RANGE * self._max_value):
                     return
+                self._behaviour = self.Behaviour.JUMP
             new_value = int(new_value)
             old_value = self.value
             self._value = new_value

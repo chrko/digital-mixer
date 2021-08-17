@@ -13,8 +13,8 @@ class TestContinuousControlReadOnly:
         assert cc.value == 5
         cc.value = 10
         assert cc.value == 10
-        cc.value = 20
-        assert cc.value == 10
+        cc.value = 50
+        assert cc.value == 50
 
     def test_jump_value(self):
         cc = ContinuousControlReadOnly(behaviour=ContinuousControlReadOnly.Behaviour.JUMP)
