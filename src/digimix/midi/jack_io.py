@@ -28,12 +28,12 @@ class RtMidiJackIO:
 
     def _rtmidi_input_callback(self, msg_data, _):
         try:
-            self._msg_queue_in.put(Message.from_bytes(msg_data[0]))
+            self._msg_queue_in.put(msg_data[0])
         except ValueError:
             pass
 
     def receive(self) -> Message:
-        return self._msg_queue_in.get()
+        return Message.from_bytes(self._msg_queue_in.get())
 
     def send(self, msg: Message):
         with self._send_lock:

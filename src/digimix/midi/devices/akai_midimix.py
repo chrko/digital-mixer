@@ -1,4 +1,5 @@
 from mido.messages import Message
+from transitions import EventData
 
 from digimix.midi.dispatcher import MidiDispatcher
 from digimix.midi.generic_controls import Button, ContinuousControlReadOnly
@@ -19,11 +20,14 @@ def make_led_handler(midi_io: RtMidiJackIO, note: int, channel: int = 0):
         velocity=0,
     )
 
-    def led_handler(caller: Button, *_, **__):
-        if caller.active:
-            midi_io.send(led_on_msg)
-        else:
-            midi_io.send(led_off_msg)
+    def led_handler(caller: Button, event: EventData, *_, **__):
+        src = event.machine.get_state(event.transition.source)
+        dest = event.machine.get_state(event.transition.dest)
+        if src.active != dest.active:
+            if dest.active:
+                midi_io.send(led_on_msg)
+            else:
+                midi_io.send(led_off_msg)
 
     return led_handler
 
@@ -102,7 +106,7 @@ class MidiMix:
                 partial_msg_dict={
                     'type': 'control_change',
                     'channel': 0,
-                    'control': 15 + i
+                    'control': 16 + i
                 },
                 callback=cc.midi_message_extractor
             )
@@ -112,7 +116,7 @@ class MidiMix:
                 partial_msg_dict={
                     'type': 'note_on',
                     'channel': 0,
-                    'note': i,
+                    'note': i + 1,
                     'velocity': 127,
                 },
                 callback=button.press,
@@ -121,12 +125,12 @@ class MidiMix:
                 partial_msg_dict={
                     'type': 'note_off',
                     'channel': 0,
-                    'note': i,
+                    'note': i + 1,
                     'velocity': 127,
                 },
                 callback=button.release,
             )
-            button.add_callback(make_led_handler(midi_io=midi_io, note=i))
+            button.add_callback(make_led_handler(midi_io=midi_io, note=i + 1))
 
     @property
     def channels(self) -> tuple[tuple[

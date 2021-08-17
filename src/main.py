@@ -4,7 +4,7 @@ from digimix.midi.devices.akai_midimix import MidiMix
 from digimix.midi.jack_io import RtMidiJackIO
 
 if __name__ == '__main__':
-    io = RtMidiJackIO('MidiMix')
+    io = RtMidiJackIO('DigitalMixerControl')
     mix = MidiMix(io)
 
 
