@@ -44,7 +44,7 @@ class TestContinuousControlReadOnly:
         assert cc.value == 5
 
     def test_mapped_value(self):
-        cc = ContinuousControlReadOnly(map_value_range=(-1, 1))
+        cc = ContinuousControlReadOnly(map_min_value=-1, map_max_value=1)
         assert cc.mapped_value == -1
         cc.value = 64
         assert cc.mapped_value == Fraction(1, 127)
@@ -53,8 +53,30 @@ class TestContinuousControlReadOnly:
         cc.value = 127
         assert cc.mapped_value == 1
 
+    def test_mapped_value_2(self):
+        cc = ContinuousControlReadOnly(min_value=-127, max_value=127, initial_value=-127, map_min_value=0, map_max_value=1)
+        assert cc.mapped_value == 0
+        cc.value = 127
+        assert cc.mapped_value == 1
+        cc.value = 0
+        assert cc.mapped_value == 0.5
+
+    def test_mapped_value_3(self):
+        cc = ContinuousControlReadOnly(min_value=-127, max_value=127, initial_value=-127, map_min_value=-1, map_max_value=1)
+        assert cc.mapped_value == -1
+        cc.value = 127
+        assert cc.mapped_value == 1
+        cc.value = 0
+        assert cc.mapped_value == 0
+
 
 class TestButton:
+    def test_arbitrary_args_actions(self):
+        b = Button()
+        b.press(msg={})
+        b.release(msg={})
+        b.press(foobar={})
+
     def test_mode_momentary(self):
         b = Button(mode=Button.Mode.MOMENTARY)
         assert b.state == 'released'

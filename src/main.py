@@ -1,6 +1,17 @@
-import mido
+from threading import Thread
 
-midi_backend = mido.Backend('mido.backends.rtmidi/UNIX_JACK')
+from digimix.midi.devices.akai_midimix import MidiMix
+from digimix.midi.jack_io import RtMidiJackIO
 
-in_port = midi_backend.open_input(client_name='DigitalMixerControl In', name='midi_in', virtual=True)
-out_port = midi_backend.open_output(client_name='DigitalMixerControl Out', name='midi_out', virtual=True)
+if __name__ == '__main__':
+    io = RtMidiJackIO('MidiMix')
+    mix = MidiMix(io)
+
+
+    def feed_events():
+        while msg := io.receive():
+            mix.dispatcher.dispatch(msg)
+
+
+    feeder = Thread(name='Feeder', target=feed_events)
+    feeder.start()

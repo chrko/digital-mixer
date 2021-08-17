@@ -3,6 +3,7 @@ import threading
 import typing
 from fractions import Fraction
 
+from mido.messages import Message
 from transitions import State
 from transitions.extensions import MachineFactory
 
@@ -24,19 +25,36 @@ class ContinuousControlReadOnly(CallbackBase):
 
     def __init__(
         self,
+        name: str = '',
+        initial_value: int = 0,
+        min_value: int = 0,
         max_value: int = 127,
-        default_value: int = 0,
-        map_value_range=(0, 1),
+        map_min_value=0,
+        map_max_value=1,
         behaviour: Behaviour = Behaviour.JUMP,
     ):
         super().__init__()
-        self._max_value = int(max_value)
+        self._name = str(name)
 
-        self._value = int(default_value)
+        self._value = int(initial_value)
         self._value_lock = threading.RLock()
 
-        self._map_value_range = tuple(map_value_range)
+        self._min_value = int(min_value)
+        self._max_value = int(max_value)
+
+        self._map_min_value = map_min_value
+        self._map_max_value = map_max_value
+        self._map_value_range_lock = threading.RLock()
+
         self._behaviour = behaviour
+
+    @property
+    def name(self) -> str:
+        return self._name
+
+    @name.setter
+    def name(self, new_value: str):
+        self._name = str(new_value)
 
     @property
     def value(self) -> int:
@@ -57,12 +75,41 @@ class ContinuousControlReadOnly(CallbackBase):
                         callback(caller=self, old_value=old_value, new_value=new_value)
 
     @property
+    def min_value(self) -> int:
+        return self._min_value
+
+    @property
     def max_value(self) -> int:
         return self._max_value
 
     @property
     def mapped_value(self):
-        return self._map_value_range[0] + Fraction(self._value, self._max_value) * (self._map_value_range[1] - self._map_value_range[0])
+        with self._map_value_range_lock:
+            return self._map_min_value + (
+                Fraction(self._value - self._min_value, self._max_value - self._min_value)
+                *
+                (self._map_max_value - self._map_min_value)
+            )
+
+    @property
+    def behaviour(self) -> Behaviour:
+        return self._behaviour
+
+    @behaviour.setter
+    def behaviour(self, new_value: Behaviour):
+        with self._value_lock:
+            self._behaviour = new_value
+
+    def __repr__(self) -> str:
+        return f'<{self.__class__.__name__} ' \
+               f'name={self.name} ' \
+               f'value={self.value} ' \
+               f'mapped_value={self.mapped_value} ' \
+               f'behaviour={self.behaviour}>'
+
+    def midi_message_extractor(self, msg: Message):
+        if msg.type == 'control_change':
+            self.value = msg.value
 
 
 class ButtonState(State):
@@ -189,9 +236,12 @@ class Button(CallbackBase):
 
     def __init__(
         self,
+        name: str = '',
         mode: Mode = Mode.TOGGLE,
     ):
         super().__init__()
+        self._name = str(name)
+
         self._mode = mode
 
         self._machine = self.MACHINE_DICT[self._mode]
@@ -201,6 +251,14 @@ class Button(CallbackBase):
 
     def __del__(self):
         self._machine.remove_model(self)
+
+    @property
+    def name(self) -> str:
+        return self._name
+
+    @name.setter
+    def name(self, new_value: str):
+        self._name = str(new_value)
 
     def _start_momentary_timeout(self, *_, **__):
         if self._momentary_timeout_timer is not None:
@@ -229,3 +287,10 @@ class Button(CallbackBase):
     @property
     def active(self) -> bool:
         return self._machine.get_state(self.state).active
+
+    def __repr__(self) -> str:
+        return f'<{self.__class__.__name__} ' \
+               f'name={self.name} ' \
+               f'pressed={self.pressed} ' \
+               f'active={self.active} ' \
+               f'mode={self._mode}>'

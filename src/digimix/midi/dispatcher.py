@@ -1,5 +1,4 @@
 import typing
-import weakref
 
 from mido.messages import checks, Message
 
@@ -15,7 +14,7 @@ class MidiDispatcher:
 
         key = dict_to_tuple(partial_msg_dict)
         if key not in self._midi_callback_map:
-            self._midi_callback_map[key] = weakref.WeakSet()
+            self._midi_callback_map[key] = set()  # weakref.WeakSet()
         self._midi_callback_map[key].add(callback)
 
     def dispatch(self, msg: Message):
