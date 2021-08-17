@@ -3,10 +3,15 @@ import threading
 import typing
 from fractions import Fraction
 
-from transitions import Machine, State
+from transitions import State
+from transitions.extensions import MachineFactory
 
 from digimix.utils.callbacks import CallbackBase
 from digimix.utils.enum import AutoNumber
+
+Machine = MachineFactory.get_predefined(
+    locked=True,
+)
 
 
 class ContinuousControlReadOnly(CallbackBase):
