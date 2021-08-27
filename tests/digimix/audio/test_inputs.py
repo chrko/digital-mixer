@@ -14,10 +14,10 @@ def test_input_patch_panel():
     desc += f"""
     audiomixer name=mix
 
-    jack_src-music.
+    src-music.
     ! audiopanorama
     ! mix.
-    jack_src-mic.
+    src-mic.
     ! audiopanorama
     ! mix.
 

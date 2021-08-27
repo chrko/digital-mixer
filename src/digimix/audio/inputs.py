@@ -42,7 +42,7 @@ class SingleJackClientInput(GstElement):
                         name=jackaudiosrc_deinter_caps-{self._name}-src_{i}
                         caps=audio/x-raw,channels=1,channel-mask=0
                     ! queue
-                        name=jack_src-{input_name}
+                        name=src-{input_name}
                         max-size-time={self.QUEUE_TIME_NS}
                 )
                 """
@@ -57,7 +57,7 @@ class SingleJackClientInput(GstElement):
                         name=jackaudiosrc_inter_caps-{self._name}-{input_name}
                         caps=audio/x-raw,channels=2
                     ! queue
-                        name=jack_src-{input_name}
+                        name=src-{input_name}
                         max-size-time={self.QUEUE_TIME_NS}
 
                     jackaudiosrc_deinter-{self._name}.src_{i}
