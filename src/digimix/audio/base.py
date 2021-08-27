@@ -20,12 +20,12 @@ class GStreamer(ABC):
 class GstElement(GStreamer):
     @property
     @abstractmethod
-    def sink(self) -> typing.Tuple[str]:
+    def sink(self) -> list[str]:
         ...
 
     @property
     @abstractmethod
-    def src(self) -> typing.Tuple[str]:
+    def src(self) -> list[str]:
         ...
 
 
@@ -41,8 +41,8 @@ class Stereo2Mono(GstElement):
     def __init__(self, name: str, *, level_db: float = None, level_amplitude: float = None):
         self._name = str(name)
 
-        self._sink = f"stereo2mono_sink-{name}"
-        self._src = f"stereo2mono_src-{name}"
+        self._sink = f"stereo2mono-sink-{name}"
+        self._src = f"stereo2mono-src-{name}"
 
         if level_db is not None:
             if level_amplitude is not None:
@@ -61,12 +61,12 @@ class Stereo2Mono(GstElement):
         return self._name
 
     @property
-    def sink(self) -> typing.Tuple[str]:
-        return tuple(self._sink)
+    def sink(self) -> list[str]:
+        return [self._sink]
 
     @property
-    def src(self) -> typing.Tuple[str]:
-        return tuple(self._src)
+    def src(self) -> list[str]:
+        return [self._src]
 
     @property
     def level_db(self) -> float:
@@ -98,20 +98,20 @@ class Stereo2Mono(GstElement):
         bin.(
             name=stereo2mono-{self.name}
             queue
-                name=stereo2mono_sink-{self.name}
+                name=stereo2mono-sink-{self.name}
                 max-size-time={self.QUEUE_TIME_NS}
             ! audio/x-raw,channels=2,channel-mask=(bitmask)0x3
             ! deinterleave
-                name=stereo2mono_split-{self.name}
+                name=stereo2mono-split-{self.name}
             audiomixer
-                name=stereo2mono_mix-{self.name}
+                name=stereo2mono-mix-{self.name}
             ! volume
-                name=stereo2mono_volume-{self.name}
+                name=stereo2mono-volume-{self.name}
                 volume={db_to_amplitude(self._level_db)}
             ! audio/x-raw,channels=1,channel-mask=(bitmask)0x0
             ! tee
-                name=stereo2mono_src-{self.name}
-            stereo2mono_split-{self.name}.src_0,src_1 ! stereo2mono_mix-{self.name}.sink_0,sink_1
+                name=stereo2mono-src-{self.name}
+            stereo2mono-split-{self.name}.src_0,src_1 ! stereo2mono-mix-{self.name}.sink_0,sink_1
         )
         """
 
@@ -119,6 +119,6 @@ class Stereo2Mono(GstElement):
         if self._pipeline is not None:
             self._pipeline = pipeline
             if pipeline is not None:
-                self._volume_element = pipeline.get_by_name(f"stereo2mono_volume-{self.name}")
+                self._volume_element = pipeline.get_by_name(f"stereo2mono-volume-{self.name}")
         else:
             raise RuntimeError("Multiple invocation of attach_pipeline not supported")

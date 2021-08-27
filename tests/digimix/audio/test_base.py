@@ -3,13 +3,15 @@ from digimix.audio.gstreamer.utils import escape_pipeline_description
 
 
 def test_stereo_to_mono():
-    bin_desc = """
+    el = Stereo2Mono('test', level_db=-6)
+
+    bin_desc = f"""
         jackaudiosrc connect=0 client-name=StereoTest
-        ! stereo2mono_sink-test.
+        ! {el.sink[0]}.
     """
-    bin_desc += Stereo2Mono('test', level_db=-6).pipeline_description
-    bin_desc += """
-        stereo2mono_src-test.
+    bin_desc += el.pipeline_description
+    bin_desc += f"""
+        {el.src[0]}.
         ! jackaudiosink connect=0 client-name=MonoSum
     """
 

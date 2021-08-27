@@ -15,10 +15,10 @@ def test_SingleJackClientInput():
     desc += f"""
     audiomixer name=mix
 
-    src-music.
+    {in_patch_panel.src[0]}.
     ! audiopanorama
     ! mix.
-    src-mic.
+    {in_patch_panel.src[1]}.
     ! audiopanorama
     ! mix.
 
@@ -41,10 +41,10 @@ def test_MultiJackClientInput():
     desc += f"""
     audiomixer name=mix
 
-    src-music.
+    {in_patch_panel.src[0]}.
     ! audiopanorama
     ! mix.
-    src-mic.
+    {in_patch_panel.src[1]}.
     ! audiopanorama
     ! mix.
 

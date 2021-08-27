@@ -12,18 +12,18 @@ class JackClientInput(GstElement, ABC):
     def __init__(self, name: str, conf: typing.Tuple[typing.Tuple[str, AudioMode], ...]):
         self._name = str(name)
         self._conf = conf
-        self._src = tuple(f"src-{name}" for name, _ in conf)
+        self._src = [f"jas-src-{name}" for name, _ in conf]
 
     @property
     def name(self) -> str:
         return self._name
 
     @property
-    def sink(self) -> typing.Tuple[str]:
-        return tuple()
+    def sink(self) -> list[str]:
+        return []
 
     @property
-    def src(self) -> typing.Tuple[str]:
+    def src(self) -> list[str]:
         return self._src
 
     def attach_pipeline(self, pipeline: Gst.Element):
@@ -46,10 +46,10 @@ class SingleJackClientInput(JackClientInput):
                 name=jas-{self._name}
                 client_name={self._name}
             ! capsfilter
-                name=jas_caps-{self._name}
+                name=jas-caps-{self._name}
                 caps=audio/x-raw,channels={audio_stream_count},channel-mask=(bitmask)0x{'0' * audio_stream_count}
             ! deinterleave
-                name=jas_deinter-{self._name}
+                name=jas-deinter-{self._name}
         """
 
         i = 0
@@ -57,45 +57,45 @@ class SingleJackClientInput(JackClientInput):
             if mode is AudioMode.MONO:
                 self._pipeline_description += f"""
                 bin.(
-                    name=bin-{self._name}-{input_name}
-                    jas_deinter-{self._name}.src_{i}
+                    name=jas-in-bin-{self._name}-{input_name}
+                    jas-deinter-{self._name}.src_{i}
                     ! capsfilter
-                        name=jas_deinter_caps-{self._name}-src_{i}
+                        name=jas-deinter_caps-{self._name}-src_{i}
                         caps=audio/x-raw,channels=1,channel-mask=(bitmask)0x0
                     ! tee
-                        name=src-{input_name}
+                        name=jas-src-{input_name}
                 )
                 """
                 i += 1
             elif mode is AudioMode.STEREO:
                 self._pipeline_description += f"""
                 bin.(
-                    name=bin-{self._name}-{input_name}
+                    name=jas-in-bin-{self._name}-{input_name}
                     interleave
-                        name=jas_inter-{self._name}-{input_name}
+                        name=jas-inter-{self._name}-{input_name}
                     ! capsfilter
-                        name=queue-jas_inter_caps-{self._name}-{input_name}
+                        name=jas-inter_caps-{self._name}-{input_name}
                         caps=audio/x-raw,channels=2,channel-mask=(bitmask)0x3
                     ! tee
-                        name=src-{input_name}
+                        name=jas-src-{input_name}
 
-                    jas_deinter-{self._name}.src_{i}
+                    jas-deinter-{self._name}.src_{i}
                     ! capsfilter
-                        name=jas_deinter-{self._name}-src_{i}
+                        name=jas-deinter_caps-{self._name}-src_{i}
                         caps=audio/x-raw,channels=1,channel-mask=(bitmask)0x1
                     ! queue
-                        name=jas_pre-inter-{self._name}-{input_name}_0
+                        name=queue-jas-pre-inter-{self._name}-{input_name}_0
                         max-size-time={self.QUEUE_TIME_NS}
-                    ! jas_inter-{self._name}-{input_name}.sink_0
+                    ! jas-inter-{self._name}-{input_name}.sink_0
 
-                    jas_deinter-{self._name}.src_{i + 1}
+                    jas-deinter-{self._name}.src_{i + 1}
                     ! capsfilter
-                        name=jas_deinter-{self._name}-src_{i + 1}
+                        name=jas-deinter-{self._name}-src_{i + 1}
                         caps=audio/x-raw,channels=1,channel-mask=(bitmask)0x2
                     ! queue
-                        name=queue-jas_pre-inter-{self._name}-{input_name}_1
+                        name=queue-jas-pre-inter-{self._name}-{input_name}_1
                         max-size-time={self.QUEUE_TIME_NS}
-                    ! jas_inter-{self._name}-{input_name}.sink_1
+                    ! jas-inter-{self._name}-{input_name}.sink_1
                 )
                 """
                 i += 2
@@ -124,31 +124,31 @@ class MultiJackClientInput(JackClientInput):
             if mode is AudioMode.MONO:
                 self._pipeline_description += f"""
                 bin.(
-                    name=bin-{self._name}-{input_name}
+                    name=jas-bin-{self._name}-{input_name}
                     jackaudiosrc
                         connect=0
                         name=jas-{self._name}-{input_name}
                         client_name={self._name}-{input_name}
                     ! capsfilter
-                        name=jas_caps-{self._name}-{input_name}
+                        name=jas-caps-{self._name}-{input_name}
                         caps=audio/x-raw,channels=1,channel-mask=(bitmask)0x0
                     ! tee
-                        name=src-{input_name}
+                        name=jas-src-{input_name}
                 )
                 """
             elif mode is AudioMode.STEREO:
                 self._pipeline_description += f"""
                 bin.(
-                    name=bin-{self._name}-{input_name}
+                    name=jas-bin-{self._name}-{input_name}
                     jackaudiosrc
                         connect=0
                         name=jas-{self._name}-{input_name}
                         client_name={self._name}-{input_name}
                     ! capsfilter
-                        name=jas_caps-{self._name}-{input_name}
+                        name=jas-caps-{self._name}-{input_name}
                         caps=audio/x-raw,channels=2,channel-mask=(bitmask)0x3
                     ! tee
-                        name=src-{input_name}
+                        name=jas-src-{input_name}
                 )
                 """
             else:
