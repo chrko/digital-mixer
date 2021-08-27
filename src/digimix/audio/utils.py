@@ -1,4 +1,5 @@
 import math
+import shlex
 
 
 def db_to_amplitude(level: float) -> float:
@@ -7,3 +8,7 @@ def db_to_amplitude(level: float) -> float:
 
 def amplitude_to_db(level: float) -> float:
     return 10 * math.log(level ** 2, 10)
+
+
+def escape_pipeline_description(desc: str) -> str:
+    return ' '.join(shlex.quote(arg) for arg in desc.replace('\n', ' ').split())

@@ -1,8 +1,7 @@
 import typing
 from abc import ABC
 
-from gi.repository import Gst
-
+from digimix.audio import Gst
 from digimix.audio.base import AudioMode, GstElement
 
 

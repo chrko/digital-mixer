@@ -2,7 +2,7 @@ import enum
 import typing
 from abc import ABC, abstractmethod
 
-from digimix.audio.gstreamer import Gst
+from digimix.audio import Gst
 from digimix.audio.utils import amplitude_to_db, db_to_amplitude
 
 

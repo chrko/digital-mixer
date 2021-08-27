@@ -1,4 +1,4 @@
-from digimix.audio.gstreamer.utils import escape_pipeline_description
+from digimix.audio.utils import escape_pipeline_description
 
 
 def test_escape_pipeline_description():

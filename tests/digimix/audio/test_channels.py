@@ -1,5 +1,5 @@
 from digimix.audio.channels import FaderChannel
-from digimix.audio.gstreamer.utils import escape_pipeline_description
+from digimix.audio.utils import escape_pipeline_description
 
 
 class TestFaderChannel:
