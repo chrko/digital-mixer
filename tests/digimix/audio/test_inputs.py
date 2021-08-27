@@ -1,4 +1,5 @@
 from digimix.audio.base import AudioMode
+from digimix.audio.gstreamer.utils import escape_pipeline_description
 from digimix.audio.inputs import MultiJackClientInput, SingleJackClientInput
 
 
@@ -25,8 +26,7 @@ def test_SingleJackClientInput():
     """
 
     print(desc)
-    desc = ' '.join(desc.replace('\n', ' ').split()).replace('(', '\\(').replace(')', '\\)')
-    print(desc)
+    print(escape_pipeline_description(desc))
 
 
 def test_MultiJackClientInput():
@@ -52,5 +52,4 @@ def test_MultiJackClientInput():
     """
 
     print(desc)
-    desc = ' '.join(desc.replace('\n', ' ').split()).replace('(', '\\(').replace(')', '\\)')
-    print(desc)
+    print(escape_pipeline_description(desc))
