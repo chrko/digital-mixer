@@ -1,15 +1,16 @@
-from digimix.audio.base import AudioMode, InputPatchPanel
+from digimix.audio.base import AudioMode
+from digimix.audio.inputs import SingleJackClientInput
 
 
 def test_input_patch_panel():
-    bin = InputPatchPanel(
+    in_patch_panel = SingleJackClientInput(
         'test',
         (
             ('music', AudioMode.STEREO),
             ('mic', AudioMode.MONO),
         )
     )
-    desc = bin.pipeline_description
+    desc = in_patch_panel.pipeline_description
     desc += f"""
     audiomixer name=mix
 
