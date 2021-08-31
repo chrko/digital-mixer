@@ -115,7 +115,7 @@ class FaderChannel(GstElement):
     def pipeline_description(self) -> str:
         desc = f"""
         bin.(
-            name=fader_channel-{self._name}
+            name=bin-fader_channel-{self._name}
             queue
                 name=fader_channel-sink-{self._name}
             ! audioamplify

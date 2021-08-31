@@ -96,7 +96,7 @@ class Stereo2Mono(GstElement):
     def pipeline_description(self) -> str:
         return f"""
         bin.(
-            name=stereo2mono-{self.name}
+            name=bin-stereo2mono-{self.name}
             queue
                 name=stereo2mono-sink-{self.name}
                 max-size-time={self.QUEUE_TIME_NS}
