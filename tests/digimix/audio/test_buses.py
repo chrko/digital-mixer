@@ -1,7 +1,7 @@
 from digimix.audio.base import AudioMode
 from digimix.audio.buses import MasterBus
 from digimix.audio.channels import FaderChannel
-from digimix.audio.inputs import JackClientInput, SingleJackClientInput
+from digimix.audio.io.jack import JackClientInput, SingleJackClientInput
 from digimix.audio.utils import escape_pipeline_description
 
 

@@ -1,4 +1,14 @@
-from digimix.audio.utils import escape_pipeline_description
+import math
+
+from digimix.audio.utils import amplitude_to_db, db_to_amplitude, escape_pipeline_description
+
+
+def test_db_to_amplitude():
+    assert 0 == db_to_amplitude(-math.inf)
+    assert -10 == amplitude_to_db(db_to_amplitude(-10))
+    assert -20 == amplitude_to_db(db_to_amplitude(-20))
+    assert -30 == amplitude_to_db(db_to_amplitude(-30))
+
 
 
 def test_escape_pipeline_description():

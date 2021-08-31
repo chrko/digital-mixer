@@ -21,7 +21,7 @@ class FaderChannel(GstElement):
         pan: float = 0,
         pan_method: AudioPanoramaMethods = AudioPanoramaMethods.PSYCHOACOUSTIC,
     ):
-        self._name = str(name)
+        super().__init__(name)
 
         self._pipeline: typing.Optional[Gst.Pipeline] = None
         self._fader: typing.Optional[Gst.Element] = None
@@ -47,7 +47,7 @@ class FaderChannel(GstElement):
         new_gain_db = float(new_gain_db)
         self._gain_db = new_gain_db
         if self._pipeline is not None:
-            gain = self._pipeline.get_by_name(f"fader_channel-gain-{self._name}")  # type: Gst.Element
+            gain = self._pipeline.get_by_name(f"fader_channel-gain-{self.name}")  # type: Gst.Element
             gain.set_property("amplification", self.gain_amplitude)
 
     @property
@@ -68,7 +68,7 @@ class FaderChannel(GstElement):
             raise ValueError(f"pan must be between [-1, 1]. Given {new_pan}")
         self._pan = new_pan
         if self._pipeline is not None:
-            panorama = self._pipeline.get_by_name(f"fader_channel-pan-{self._name}")  # type: Gst.Element
+            panorama = self._pipeline.get_by_name(f"fader_channel-pan-{self.name}")  # type: Gst.Element
             panorama.set_property("panorama", self._pan)
 
     @property
@@ -81,7 +81,7 @@ class FaderChannel(GstElement):
             raise ValueError(f"Given pan_method is not a supported AudioPanoramaMethods: {new_pan_method}")
         self._pan_method = new_pan_method
         if self._pipeline is not None:
-            panorama = self._pipeline.get_by_name(f"fader_channel-pan-{self._name}")  # type: Gst.Element
+            panorama = self._pipeline.get_by_name(f"fader_channel-pan-{self.name}")  # type: Gst.Element
             panorama.set_property("method", int(self._pan_method))
 
     @property
@@ -115,51 +115,51 @@ class FaderChannel(GstElement):
     def pipeline_description(self) -> str:
         desc = f"""
         bin.(
-            name=bin-fader_channel-{self._name}
+            name=bin-fader_channel-{self.name}
             queue
-                name=fader_channel-sink-{self._name}
+                name=fader_channel-sink-{self.name}
             ! audioamplify
-                name=fader_channel-gain-{self._name}
+                name=fader_channel-gain-{self.name}
                 amplification={self.gain_amplitude}"""
 
         if self._phase_invert:
             desc += f"""
             ! audioinvert
-                name=fader_channel-phase_invert-{self._name}"""
+                name=fader_channel-phase_invert-{self.name}"""
 
         desc += f"""
             ! tee
-                name=fader_channel-pre_fader-{self._name}
+                name=fader_channel-pre_fader-{self.name}
             ! level
-                name=fader_channel-level-{self._name}
+                name=fader_channel-level-{self.name}
             ! volume
-                name=fader_channel-fader-{self._name}
+                name=fader_channel-fader-{self.name}
             ! tee
-                name=fader_channel-post_fader-{self._name}
+                name=fader_channel-post_fader-{self.name}
             ! audiopanorama
-                name=fader_channel-pan-{self._name}
+                name=fader_channel-pan-{self.name}
                 panorama={self._pan}
                 method={self._pan_method}
             ! capsfilter
-                name=fader_channel-pan_caps-{self._name}
+                name=fader_channel-pan_caps-{self.name}
                 caps=audio/x-raw,channels=2,channel-mask=(bitmask)0x3
             ! tee
-                name=fader_channel-src-{self._name}
+                name=fader_channel-src-{self.name}
         )"""
 
         return desc
 
     def attach_pipeline(self, pipeline: Gst.Pipeline):
         self._pipeline = pipeline
-        self._fader = pipeline.get_by_name(f"fader_channel-fader-{self._name}")
+        self._fader = pipeline.get_by_name(f"fader_channel-fader-{self.name}")
 
     @property
     def sink(self) -> list[str]:
-        return [f"fader_channel-sink-{self._name}"]
+        return [f"fader_channel-sink-{self.name}"]
 
     @property
     def src(self) -> list[str]:
-        return [f"fader_channel-src-{self._name}"]
+        return [f"fader_channel-src-{self.name}"]
 
     @property
     def phase_invert(self) -> bool:

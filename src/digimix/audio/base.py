@@ -2,22 +2,20 @@ import enum
 import typing
 from abc import ABC, abstractmethod
 
-from digimix.audio import Gst
+from digimix.audio import Gst, GstAudio
 from digimix.audio.utils import amplitude_to_db, db_to_amplitude
 
 
-class GStreamer(ABC):
+class GstElement(ABC):
+    QUEUE_TIME_NS = 3 * 1000 * 1000 * 1000
+
+    def __init__(self, name: str):
+        self.__name = str(name)
+
     @property
-    @abstractmethod
-    def pipeline_description(self) -> str:
-        ...
+    def name(self) -> str:
+        return self.__name
 
-    @abstractmethod
-    def attach_pipeline(self, pipeline: Gst.Pipeline):
-        ...
-
-
-class GstElement(GStreamer):
     @property
     @abstractmethod
     def sink(self) -> list[str]:
@@ -28,21 +26,49 @@ class GstElement(GStreamer):
     def src(self) -> list[str]:
         ...
 
+    @property
+    @abstractmethod
+    def pipeline_description(self) -> str:
+        ...
+
+    @abstractmethod
+    def attach_pipeline(self, pipeline: Gst.Pipeline):
+        ...
+
 
 @enum.unique
 class AudioMode(enum.Enum):
-    MONO = 1
-    STEREO = 2
+    UNKNOWN = (1, [GstAudio.AudioChannelPosition.NONE])
+    MONO = (1, [GstAudio.AudioChannelPosition.MONO])
+    STEREO = (2, [GstAudio.AudioChannelPosition.FRONT_LEFT, GstAudio.AudioChannelPosition.FRONT_RIGHT])
+    LEFT_ONLY = (1, [GstAudio.AudioChannelPosition.FRONT_LEFT])
+    RIGHT_ONLY = (1, [GstAudio.AudioChannelPosition.FRONT_RIGHT])
+
+    def __init__(self, channels, channel_positions):
+        self._channels = int(channels)
+        valid, mask = GstAudio.audio_channel_positions_to_mask(channel_positions, True)
+        if not valid:
+            raise AssertionError("Couldn't convert to channel mask")
+        self._channel_mask = f"{mask:x}"
+
+    @property
+    def channels(self) -> int:
+        return self._channels
+
+    @property
+    def channel_mask(self) -> str:
+        return self._channel_mask
+
+    def caps(self, format_info="audio/x-raw"):
+        return f"{format_info},channels={self.channels},channel-mask=(bitmask)0x{self.channel_mask}"
 
 
 class Stereo2Mono(GstElement):
-    QUEUE_TIME_NS = 3 * 1000 * 1000 * 1000
-
     def __init__(self, name: str, *, level_db: float = None, level_amplitude: float = None):
-        self._name = str(name)
+        super().__init__(name)
 
-        self._sink = f"stereo2mono-sink-{name}"
-        self._src = f"stereo2mono-src-{name}"
+        self._sink = f"stereo2mono-sink-{self.name}"
+        self._src = f"stereo2mono-src-{self.name}"
 
         if level_db is not None:
             if level_amplitude is not None:
@@ -55,10 +81,6 @@ class Stereo2Mono(GstElement):
 
         self._pipeline: typing.Optional[Gst.Pipeline] = None
         self._volume_element: typing.Optional[Gst.Element] = None
-
-    @property
-    def name(self) -> str:
-        return self._name
 
     @property
     def sink(self) -> list[str]:
