@@ -8,6 +8,9 @@ from digimix.audio.base import AudioMode, GstElement
 class JackClientInput(GstElement, ABC):
     QUEUE_TIME_NS = 3 * 1000 * 1000 * 1000
 
+    JACK_BUFFER_TIME_US = 50_000
+    JACK_LATENCY_TIME_US = 1_000
+
     def __init__(self, name: str, conf: typing.Tuple[typing.Tuple[str, AudioMode], ...]):
         self._name = str(name)
         self._conf = conf
@@ -44,6 +47,8 @@ class SingleJackClientInput(JackClientInput):
                 connect=0
                 name=jas-{self._name}
                 client_name={self._name}
+                buffer-time={self.JACK_BUFFER_TIME_US}
+                latency-time={self.JACK_LATENCY_TIME_US}
             ! capsfilter
                 name=jas-caps-{self._name}
                 caps=audio/x-raw,channels={audio_stream_count},channel-mask=(bitmask)0x{'0' * audio_stream_count}
@@ -128,6 +133,8 @@ class MultiJackClientInput(JackClientInput):
                         connect=0
                         name=jas-{self._name}-{input_name}
                         client_name={self._name}-{input_name}
+                        buffer-time={self.JACK_BUFFER_TIME_US}
+                        latency-time={self.JACK_LATENCY_TIME_US}
                     ! capsfilter
                         name=jas-caps-{self._name}-{input_name}
                         caps=audio/x-raw,channels=1,channel-mask=(bitmask)0x0
@@ -143,6 +150,8 @@ class MultiJackClientInput(JackClientInput):
                         connect=0
                         name=jas-{self._name}-{input_name}
                         client_name={self._name}-{input_name}
+                        buffer-time={self.JACK_BUFFER_TIME_US}
+                        latency-time={self.JACK_LATENCY_TIME_US}
                     ! capsfilter
                         name=jas-caps-{self._name}-{input_name}
                         caps=audio/x-raw,channels=2,channel-mask=(bitmask)0x3
