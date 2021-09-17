@@ -117,18 +117,25 @@ class Stereo2Mono(GstElement):
             queue
                 name=stereo2mono-sink-{self.name}
                 max-size-time={self.QUEUE_TIME_NS}
-            ! audio/x-raw,channels=2,channel-mask=(bitmask)0x3
+            ! capsfilter
+                name=stereo2mono-caps-in
+                caps={AudioMode.STEREO.caps()}
             ! deinterleave
                 name=stereo2mono-split-{self.name}
+
+            stereo2mono-split-{self.name}.src_0,src_1
+            ! stereo2mono-mix-{self.name}.sink_0,sink_1
+
             audiomixer
                 name=stereo2mono-mix-{self.name}
             ! volume
                 name=stereo2mono-volume-{self.name}
                 volume={db_to_amplitude(self._level_db)}
-            ! audio/x-raw,channels=1,channel-mask=(bitmask)0x0
+            ! capsfilter
+                name=stereo2mono-caps-out
+                caps={AudioMode.MONO.caps()}
             ! tee
                 name=stereo2mono-src-{self.name}
-            stereo2mono-split-{self.name}.src_0,src_1 ! stereo2mono-mix-{self.name}.sink_0,sink_1
         )
         """
 
