@@ -95,24 +95,19 @@ class Stereo2Mono(GstElement):
         return self._level_db
 
     @level_db.setter
-    def level_db(self, new_value: float):
-        old_value = self._level_db
-        if old_value != new_value:
-            self._level_db = float(new_value)
-            if self._volume_element:
-                self._volume_element.set_property("volume", db_to_amplitude(new_value))
+    def level_db(self, new_level_db: float):
+        new_level_db = float(new_level_db)
+        self._level_db = new_level_db
+        if self._volume_element:
+            self._volume_element.set_property("volume", db_to_amplitude(new_level_db))
 
     @property
     def level_amplitude(self) -> float:
         return db_to_amplitude(self._level_db)
 
     @level_amplitude.setter
-    def level_amplitude(self, new_value: float):
-        old_value = db_to_amplitude(self._level_db)
-        if old_value != new_value:
-            self._level_db = amplitude_to_db(new_value)
-            if self._volume_element:
-                self._volume_element.set_property("volume", new_value)
+    def level_amplitude(self, new_level_amplitude: float):
+        self.level_db = amplitude_to_db(new_level_amplitude)
 
     @property
     def pipeline_description(self) -> str:
