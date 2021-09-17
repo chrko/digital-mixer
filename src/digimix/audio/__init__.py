@@ -11,5 +11,4 @@ minGst = (1, 18)
 
 Gst.init([])
 if Gst.version() < minGst:
-    raise Exception('GStreamer version', Gst.version(),
-                    'is too old, at least', minGst, 'is required')
+    raise Exception('GStreamer version', Gst.version(), 'is too old, at least', minGst, 'is required')
