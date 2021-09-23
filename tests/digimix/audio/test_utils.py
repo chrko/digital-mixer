@@ -1,6 +1,14 @@
 import math
 
-from digimix.audio.utils import amplitude_to_db, db_to_amplitude, escape_pipeline_description
+import pytest
+
+from digimix.audio.utils import (
+    amplitude_to_db,
+    db_to_amplitude,
+    escape_pipeline_description,
+    linspace,
+    make_discrete_to_continuous,
+)
 
 
 def test_db_to_amplitude():
@@ -9,6 +17,33 @@ def test_db_to_amplitude():
     assert -20 == amplitude_to_db(db_to_amplitude(-20))
     assert -30 == amplitude_to_db(db_to_amplitude(-30))
 
+
+def test_linspace():
+    assert linspace(1, 127, 9) == (1., 16.75, 32.5, 48.25, 64., 79.75, 95.5, 111.25, 127.)
+
+
+@pytest.mark.parametrize("cached", [True, False])
+def test_make_discrete_to_continuous_defaults(cached):
+    f = make_discrete_to_continuous(cached=cached)
+    assert f(0) == -math.inf
+    assert f(1) == -98.35
+    assert f(127) == 0
+    assert f(126) == -0.2756
+
+
+@pytest.mark.parametrize("cached", [True, False])
+def test_make_discrete_to_continuous_input(cached):
+    f = make_discrete_to_continuous(
+        x=(-128, 127),
+        y=(0, 10, 50, 100, 120, 140, 200),
+        edge_points=(),
+        cached=cached,
+    )
+    assert f(-128) == 0
+    assert f(127) == 200
+    assert f(0) == 100.2
+    assert f(50) == 123.8
+    assert f(-50) == 43.41
 
 
 def test_escape_pipeline_description():

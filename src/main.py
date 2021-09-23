@@ -12,28 +12,25 @@ if __name__ == '__main__':
     src = SingleJackClientInput(
         name="main_in",
         conf=(
-            ("mic1", AudioMode.MONO),
+            ("mic", AudioMode.MONO),
+            ("ms_teams", AudioMode.STEREO),
             ("music", AudioMode.STEREO),
-            ("drums", AudioMode.STEREO),
-            ("bass", AudioMode.MONO),
-            ("guitar", AudioMode.MONO),
+            ("other", AudioMode.MONO),
         )
     )
 
-    mic1 = FaderChannel(
-        name="mic1",
+    mic = FaderChannel(
+        name="mic",
     )
+    ms_teams = FaderChannel(name="ms_teams")
     music = FaderChannel(name="music")
-    drums = FaderChannel(name="drums")
-    bass = FaderChannel(name="bass")
-    guitar = FaderChannel(name="guitar")
+    other = FaderChannel(name="other")
 
     master = MasterBus(name="master", inputs=[
-        mic1.src[0],
+        mic.src[0],
+        ms_teams.src[0],
         music.src[0],
-        drums.src[0],
-        bass.src[0],
-        guitar.src[0],
+        other.src[0],
     ])
 
     out = SingleJackClientOutput(
@@ -45,19 +42,17 @@ if __name__ == '__main__':
 
     desc = ""
     desc += src.pipeline_description + "\n"
-    desc += mic1.pipeline_description + "\n"
+    desc += mic.pipeline_description + "\n"
+    desc += ms_teams.pipeline_description + "\n"
     desc += music.pipeline_description + "\n"
-    desc += drums.pipeline_description + "\n"
-    desc += bass.pipeline_description + "\n"
-    desc += guitar.pipeline_description + "\n"
+    desc += other.pipeline_description + "\n"
     desc += master.pipeline_description + "\n"
     desc += out.pipeline_description + "\n"
 
-    desc += f"{src.src[0]}. ! {mic1.sink[0]}." + "\n"
+    desc += f"{src.src[0]}. ! {mic.sink[0]}." + "\n"
+    desc += f"{src.src[2]}. ! {ms_teams.sink[0]}." + "\n"
     desc += f"{src.src[1]}. ! {music.sink[0]}." + "\n"
-    desc += f"{src.src[2]}. ! {drums.sink[0]}." + "\n"
-    desc += f"{src.src[3]}. ! {bass.sink[0]}." + "\n"
-    desc += f"{src.src[4]}. ! {guitar.sink[0]}." + "\n"
+    desc += f"{src.src[3]}. ! {other.sink[0]}." + "\n"
     desc += f"{master.src[0]}. ! {out.sink[0]}." + "\n"
 
     print(desc)
