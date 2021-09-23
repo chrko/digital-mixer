@@ -1,22 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <aj-snapshot>
-    <jack>
-        <client name="a2j">
-            <port name="MIDI Mix [20] (capture): MIDI Mix MIDI 1">
-                <connection port="midi-mix-out-monitor:input"/>
-                <connection port="DigitalMixerControlIn:Midi In"/>
-            </port>
-            <port name="MIDI Mix [28] (capture): MIDI Mix MIDI 1">
-                <connection port="midi-mix-out-monitor:input"/>
-                <connection port="DigitalMixerControlIn:Midi In"/>
-            </port>
-        </client>
-        <client name="DigitalMixerControlOut">
-            <port name="Midi Out">
-                <connection port="a2j:MIDI Mix [20] (playback): MIDI Mix MIDI 1"/>
-                <connection port="a2j:MIDI Mix [28] (playback): MIDI Mix MIDI 1"/>
-                <connection port="digi-mix-out-monitor:input"/>
-            </port>
-        </client>
-    </jack>
+<jack>
+  <client name="system">
+    <port name="capture_1" />
+    <port name="capture_2" />
+  </client>
+  <client name="PulseAudio JACK Sink">
+    <port name="front-left">
+      <connection port="main_in:in_jack-src-main_in_2" />
+    </port>
+    <port name="front-right">
+      <connection port="main_in:in_jack-src-main_in_3" />
+    </port>
+  </client>
+  <client name="a2j">
+    <port name="Midi Through [14] (capture): Midi Through Port-0" />
+    <port name="MIDI Mix [20] (capture): MIDI Mix MIDI 1">
+      <connection port="DigitalMixerControlIn:Midi In" />
+    </port>
+  </client>
+  <client name="DigitalMixerControlOut">
+    <port name="Midi Out">
+      <connection port="a2j:MIDI Mix [20] (playback): MIDI Mix MIDI 1" />
+    </port>
+  </client>
+  <client name="main_out">
+    <port name="out_jack-sink-main_out_1">
+      <connection port="PulseAudio JACK Source:front-left" />
+    </port>
+    <port name="out_jack-sink-main_out_2">
+      <connection port="PulseAudio JACK Source:front-right" />
+    </port>
+  </client>
+</jack>
 </aj-snapshot>

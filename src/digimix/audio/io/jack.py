@@ -1,9 +1,10 @@
 import typing
 from abc import ABC
 
-from digimix.audio import Gst
+from digimix.audio import Gst, GstAudio
 from digimix.audio.base import AudioMode
 from digimix.audio.io import Input, Output
+from digimix.audio.io.jack_fix import get_jack_channel_pos
 
 
 class JackClient(ABC):
@@ -44,7 +45,7 @@ class SingleJackClientInput(JackClientInput):
                 latency-time={self.JACK_LATENCY_TIME_US}
             ! capsfilter
                 name=jack-src-caps-{self.name}
-                caps=audio/x-raw,channels={audio_stream_count},channel-mask=(bitmask)0x{'0' * audio_stream_count}
+                caps=audio/x-raw,channels={audio_stream_count},channel-mask=(bitmask)0x{hex(GstAudio.audio_channel_get_fallback_mask(audio_stream_count))}
             ! deinterleave
                 name=jack-src-deinterleave-{self.name}
         """
@@ -55,9 +56,9 @@ class SingleJackClientInput(JackClientInput):
                 self._pipeline_description += f"""
                 bin.(
                     name=bin-jack-src-in-{self.name}-{input_name}
-                    jack-src-deinterleave-{self.name}.src_{i}
+                    jack-src-deinterleave-{self.name}.src_{get_jack_channel_pos(audio_stream_count, i)}
                     ! capsfilter
-                        name=jack-src-deinterleave_caps-{self.name}-src_{i}
+                        name=jack-src-deinterleave_caps-{self.name}-{input_name}
                         caps={mode.caps()}
                     ! tee
                         name=jack-src-{input_name}
@@ -76,7 +77,7 @@ class SingleJackClientInput(JackClientInput):
                     ! tee
                         name=jack-src-{input_name}
 
-                    jack-src-deinterleave-{self.name}.src_{i}
+                    jack-src-deinterleave-{self.name}.src_{get_jack_channel_pos(audio_stream_count, i)}
                     ! capsfilter
                         name=jack-src-deinterleave_caps-{self.name}-{input_name}_left
                         caps={AudioMode.LEFT_ONLY.caps()}
@@ -85,7 +86,7 @@ class SingleJackClientInput(JackClientInput):
                         max-size-time={self.QUEUE_TIME_NS}
                     ! jack-src-interleave-{self.name}-{input_name}.sink_0
 
-                    jack-src-deinterleave-{self.name}.src_{i + 1}
+                    jack-src-deinterleave-{self.name}.src_{get_jack_channel_pos(audio_stream_count, i + 1)}
                     ! capsfilter
                         name=jack-src-deinterleave-{self.name}-{input_name}_right
                         caps={AudioMode.RIGHT_ONLY.caps()}

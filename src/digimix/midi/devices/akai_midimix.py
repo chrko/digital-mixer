@@ -1,3 +1,6 @@
+import threading
+from typing import Optional
+
 from mido.messages import Message
 from transitions import EventData
 
@@ -34,7 +37,7 @@ def make_led_handler(midi_io: RtMidiJackIO, note: int, channel: int = 0):
 
 class MidiMix:
     def __init__(self, midi_io: RtMidiJackIO):
-        self.midi_io = midi_io
+        self._midi_io = midi_io
         self._dispatcher = MidiDispatcher()
 
         ccs = [
@@ -133,6 +136,21 @@ class MidiMix:
             )
             button.add_callback(make_led_handler(midi_io=midi_io, note=i + 1))
 
+        self._feeder_thread: Optional[threading.Thread] = None
+
+    def start_feeder(self):
+        if self._feeder_thread is None:
+            self._feeder_thread = threading.Thread(
+                name="MidiMix Event Feeder",
+                target=self._feed_events,
+                daemon=True,
+            )
+            self._feeder_thread.start()
+
+    def _feed_events(self):
+        while msg := self._midi_io.receive():
+            self._dispatcher.dispatch(msg)
+
     @property
     def channels(self) -> tuple[tuple[
         ContinuousControlReadOnly, ContinuousControlReadOnly, ContinuousControlReadOnly, Button, Button, Button, ContinuousControlReadOnly
@@ -154,7 +172,3 @@ class MidiMix:
     @property
     def special_buttons(self) -> tuple[Button]:
         return self._special_buttons
-
-    @property
-    def dispatcher(self) -> MidiDispatcher:
-        return self._dispatcher

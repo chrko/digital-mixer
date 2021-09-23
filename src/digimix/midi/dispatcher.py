@@ -18,6 +18,8 @@ class MidiDispatcher:
         self._midi_callback_map[key].add(callback)
 
     def dispatch(self, msg: Message):
+        if not isinstance(msg, Message):
+            return
         msg_dict_view = msg.dict().items()
         for partial_msg_dict, callbacks in self._midi_callback_map.items():
             if dict(partial_msg_dict).items() <= msg_dict_view:

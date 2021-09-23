@@ -6,9 +6,15 @@ from digimix.audio.base import AudioMode
 from digimix.audio.buses import MasterBus
 from digimix.audio.channels import FaderChannel
 from digimix.audio.io.jack import SingleJackClientInput, SingleJackClientOutput
+from digimix.audio.utils import default_linear_fader_midi_to_db
+from digimix.midi.devices.akai_midimix import MidiMix
+from digimix.midi.jack_io import RtMidiJackIO
 from digimix.utils.debug.gstreamer import gst_generate_dot
 
 if __name__ == '__main__':
+    midi_io = RtMidiJackIO('DigitalMixerControl')
+    hw = MidiMix(midi_io)
+
     src = SingleJackClientInput(
         name="main_in",
         conf=(
@@ -19,9 +25,7 @@ if __name__ == '__main__':
         )
     )
 
-    mic = FaderChannel(
-        name="mic",
-    )
+    mic = FaderChannel(name="mic",)
     ms_teams = FaderChannel(name="ms_teams")
     music = FaderChannel(name="music")
     other = FaderChannel(name="other")
@@ -40,20 +44,27 @@ if __name__ == '__main__':
         )
     )
 
-    desc = ""
-    desc += src.pipeline_description + "\n"
-    desc += mic.pipeline_description + "\n"
-    desc += ms_teams.pipeline_description + "\n"
-    desc += music.pipeline_description + "\n"
-    desc += other.pipeline_description + "\n"
-    desc += master.pipeline_description + "\n"
-    desc += out.pipeline_description + "\n"
+    els = [
+        src,
+        mic,
+        ms_teams,
+        music,
+        other,
+        master,
+        out,
+    ]
 
-    desc += f"{src.src[0]}. ! {mic.sink[0]}." + "\n"
-    desc += f"{src.src[2]}. ! {ms_teams.sink[0]}." + "\n"
-    desc += f"{src.src[1]}. ! {music.sink[0]}." + "\n"
-    desc += f"{src.src[3]}. ! {other.sink[0]}." + "\n"
-    desc += f"{master.src[0]}. ! {out.sink[0]}." + "\n"
+    p_descs = [
+                  el.pipeline_description for el in els
+              ] + [
+                  f"{src.src[0]}. ! {mic.sink[0]}.",
+                  f"{src.src[1]}. ! {ms_teams.sink[0]}.",
+                  f"{src.src[2]}. ! {music.sink[0]}.",
+                  f"{src.src[3]}. ! {other.sink[0]}.",
+                  f"{master.src[0]}. ! {out.sink[0]}.",
+              ]
+
+    desc = "\n".join(p_descs)
 
     print(desc)
 
@@ -61,29 +72,35 @@ if __name__ == '__main__':
     pipeline = Gst.parse_launch(desc)  # type: Gst.Pipeline
     assert pipeline
     pipeline.set_state(Gst.State.PLAYING)
-    music.attach_pipeline(pipeline)
+    for el in els:
+        el.attach_pipeline(pipeline)
 
 
-    def threader():
-        time.sleep(2)
-        gst_generate_dot(pipeline, "1")
-        music.cut = True
-        gst_generate_dot(pipeline, "2")
-        time.sleep(0.5)
-        music.cut = False
-        music.pan = -0.5
-        gst_generate_dot(pipeline, "3")
-        time.sleep(0.5)
-        music.fader_db = -10
-        gst_generate_dot(pipeline, "4")
-        time.sleep(2)
-        main.quit()
+    def fader_channel_fader_callback_maker(fader: FaderChannel):
+        def callback(new_value, *_, **__):
+            fader.fader_db = default_linear_fader_midi_to_db(new_value)
+
+        return callback
 
 
-    t = threading.Thread(name="fader_channel_tester", target=threader)
-    t.start()
+    hw.faders[0].add_callback(fader_channel_fader_callback_maker(mic))
+    hw.faders[1].add_callback(fader_channel_fader_callback_maker(ms_teams))
+    hw.faders[2].add_callback(fader_channel_fader_callback_maker(music))
+    hw.faders[3].add_callback(fader_channel_fader_callback_maker(other))
+
+
+    def dotter():
+        while True:
+            gst_generate_dot(pipeline, str(int(time.time())))
+            time.sleep(5)
+
+
+    dotter_thread = threading.Thread(name="Dotter", target=dotter, daemon=True)
+    #dotter_thread.start()
 
     try:
+        hw.start_feeder()
         main.run()
-    except KeyError:
+    except KeyboardInterrupt:
+        midi_io.delete()
         main.quit()
