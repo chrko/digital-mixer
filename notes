@@ -1,0 +1,39 @@
+Input Channel
+
+Stereo Input Manipulation
+- L->L R->R (Normale)		(audiochannelmix)
+- L->R R->L (switch)		(audiochannelmix)
+- L->L L->R (links beide)	(audiochannelmix)
+- R->L R->R (rechts beide)	(audiochannelmix)
+- Mono						(deinterleave + audiomixer)
+- Mono -3db					(deinterleave + audiomixer + volume)
+- Mono -6db					(deinterleave + audiomixer + volume)
+
+
+Input Gain
+	- audioamplify
+
+Phase correction
+	- audioinvert
+
+EQ
+	- audiochebband
+	- audiocheblimit
+	- audiowsincband
+	- audiowsinclimit
+
+Dyn
+- compressor
+- limiter
+	- audiodynamic
+
+Cut
+
+Clipping Indicator
+	- level
+
+Fader
+	- volume
+
+Panomara / Balance
+	- audiopanorama
