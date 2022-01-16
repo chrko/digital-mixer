@@ -1,0 +1,260 @@
+[[package]]
+name = "atomicwrites"
+version = "1.4.0"
+description = "Atomic file writes."
+category = "dev"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+
+[[package]]
+name = "attrs"
+version = "21.4.0"
+description = "Classes Without Boilerplate"
+category = "dev"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
+
+[package.extras]
+dev = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "six", "mypy", "pytest-mypy-plugins", "zope.interface", "furo", "sphinx", "sphinx-notfound-page", "pre-commit", "cloudpickle"]
+docs = ["furo", "sphinx", "zope.interface", "sphinx-notfound-page"]
+tests = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "six", "mypy", "pytest-mypy-plugins", "zope.interface", "cloudpickle"]
+tests_no_zope = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "six", "mypy", "pytest-mypy-plugins", "cloudpickle"]
+
+[[package]]
+name = "colorama"
+version = "0.4.4"
+description = "Cross-platform colored terminal text."
+category = "dev"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
+
+[[package]]
+name = "iniconfig"
+version = "1.1.1"
+description = "iniconfig: brain-dead simple config-ini parsing"
+category = "dev"
+optional = false
+python-versions = "*"
+
+[[package]]
+name = "mido"
+version = "1.2.10"
+description = "MIDI Objects for Python"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.extras]
+dev = ["check-manifest (>=0.35)", "flake8 (>=3.4.1)", "pytest (>=3.2.2)", "sphinx (>=1.6.3)", "tox (>=2.8.2)"]
+ports = ["python-rtmidi (>=1.1.0)"]
+
+[[package]]
+name = "packaging"
+version = "21.3"
+description = "Core utilities for Python packages"
+category = "dev"
+optional = false
+python-versions = ">=3.6"
+
+[package.dependencies]
+pyparsing = ">=2.0.2,<3.0.5 || >3.0.5"
+
+[[package]]
+name = "pluggy"
+version = "1.0.0"
+description = "plugin and hook calling mechanisms for python"
+category = "dev"
+optional = false
+python-versions = ">=3.6"
+
+[package.extras]
+dev = ["pre-commit", "tox"]
+testing = ["pytest", "pytest-benchmark"]
+
+[[package]]
+name = "py"
+version = "1.11.0"
+description = "library with cross-python path, ini-parsing, io, code, log facilities"
+category = "dev"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
+
+[[package]]
+name = "pycairo"
+version = "1.20.1"
+description = "Python interface for cairo"
+category = "main"
+optional = false
+python-versions = ">=3.6, <4"
+
+[[package]]
+name = "pygobject"
+version = "3.42.0"
+description = "Python bindings for GObject Introspection"
+category = "main"
+optional = false
+python-versions = ">=3.6, <4"
+
+[package.dependencies]
+pycairo = ">=1.16,<2.0"
+
+[[package]]
+name = "pyparsing"
+version = "3.0.6"
+description = "Python parsing module"
+category = "dev"
+optional = false
+python-versions = ">=3.6"
+
+[package.extras]
+diagrams = ["jinja2", "railroad-diagrams"]
+
+[[package]]
+name = "pytest"
+version = "6.2.5"
+description = "pytest: simple powerful testing with Python"
+category = "dev"
+optional = false
+python-versions = ">=3.6"
+
+[package.dependencies]
+atomicwrites = {version = ">=1.0", markers = "sys_platform == \"win32\""}
+attrs = ">=19.2.0"
+colorama = {version = "*", markers = "sys_platform == \"win32\""}
+iniconfig = "*"
+packaging = "*"
+pluggy = ">=0.12,<2.0"
+py = ">=1.8.2"
+toml = "*"
+
+[package.extras]
+testing = ["argcomplete", "hypothesis (>=3.56)", "mock", "nose", "requests", "xmlschema"]
+
+[[package]]
+name = "python-rtmidi"
+version = "1.4.9"
+description = "A Python binding for the RtMidi C++ library implemented using Cython."
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
+name = "six"
+version = "1.16.0"
+description = "Python 2 and 3 compatibility utilities"
+category = "main"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
+
+[[package]]
+name = "toml"
+version = "0.10.2"
+description = "Python Library for Tom's Obvious, Minimal Language"
+category = "dev"
+optional = false
+python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
+
+[[package]]
+name = "transitions"
+version = "0.8.10"
+description = "A lightweight, object-oriented Python state machine implementation with many extensions."
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+six = "*"
+
+[package.extras]
+diagrams = ["pygraphviz"]
+test = ["pytest"]
+
+[metadata]
+lock-version = "1.1"
+python-versions = "^3.9"
+content-hash = "7caf25bf2985f6c7dcf6c4902530f3a273a7bea0fe1dc3d18f0db4a3aca260af"
+
+[metadata.files]
+atomicwrites = [
+    {file = "atomicwrites-1.4.0-py2.py3-none-any.whl", hash = "sha256:6d1784dea7c0c8d4a5172b6c620f40b6e4cbfdf96d783691f2e1302a7b88e197"},
+    {file = "atomicwrites-1.4.0.tar.gz", hash = "sha256:ae70396ad1a434f9c7046fd2dd196fc04b12f9e91ffb859164193be8b6168a7a"},
+]
+attrs = [
+    {file = "attrs-21.4.0-py2.py3-none-any.whl", hash = "sha256:2d27e3784d7a565d36ab851fe94887c5eccd6a463168875832a1be79c82828b4"},
+    {file = "attrs-21.4.0.tar.gz", hash = "sha256:626ba8234211db98e869df76230a137c4c40a12d72445c45d5f5b716f076e2fd"},
+]
+colorama = [
+    {file = "colorama-0.4.4-py2.py3-none-any.whl", hash = "sha256:9f47eda37229f68eee03b24b9748937c7dc3868f906e8ba69fbcbdd3bc5dc3e2"},
+    {file = "colorama-0.4.4.tar.gz", hash = "sha256:5941b2b48a20143d2267e95b1c2a7603ce057ee39fd88e7329b0c292aa16869b"},
+]
+iniconfig = [
+    {file = "iniconfig-1.1.1-py2.py3-none-any.whl", hash = "sha256:011e24c64b7f47f6ebd835bb12a743f2fbe9a26d4cecaa7f53bc4f35ee9da8b3"},
+    {file = "iniconfig-1.1.1.tar.gz", hash = "sha256:bc3af051d7d14b2ee5ef9969666def0cd1a000e121eaea580d4a313df4b37f32"},
+]
+mido = [
+    {file = "mido-1.2.10-py2.py3-none-any.whl", hash = "sha256:0e618232063e0a220249da4961563c7636fea00096cfb3e2b87a4231f0ac1a9e"},
+    {file = "mido-1.2.10.tar.gz", hash = "sha256:17b38a8e4594497b850ec6e78b848eac3661706bfc49d484a36d91335a373499"},
+]
+packaging = [
+    {file = "packaging-21.3-py3-none-any.whl", hash = "sha256:ef103e05f519cdc783ae24ea4e2e0f508a9c99b2d4969652eed6a2e1ea5bd522"},
+    {file = "packaging-21.3.tar.gz", hash = "sha256:dd47c42927d89ab911e606518907cc2d3a1f38bbd026385970643f9c5b8ecfeb"},
+]
+pluggy = [
+    {file = "pluggy-1.0.0-py2.py3-none-any.whl", hash = "sha256:74134bbf457f031a36d68416e1509f34bd5ccc019f0bcc952c7b909d06b37bd3"},
+    {file = "pluggy-1.0.0.tar.gz", hash = "sha256:4224373bacce55f955a878bf9cfa763c1e360858e330072059e10bad68531159"},
+]
+py = [
+    {file = "py-1.11.0-py2.py3-none-any.whl", hash = "sha256:607c53218732647dff4acdfcd50cb62615cedf612e72d1724fb1a0cc6405b378"},
+    {file = "py-1.11.0.tar.gz", hash = "sha256:51c75c4126074b472f746a24399ad32f6053d1b34b68d2fa41e558e6f4a98719"},
+]
+pycairo = [
+    {file = "pycairo-1.20.1-cp310-cp310-win32.whl", hash = "sha256:736ffc618e851601e861a630293e5c910ef016b83b2d035a336f83a367bf56ab"},
+    {file = "pycairo-1.20.1-cp310-cp310-win_amd64.whl", hash = "sha256:261c69850d4b2ec03346c9745bad2a835bb8124e4c6961b8ceac503d744eb3b3"},
+    {file = "pycairo-1.20.1-cp36-cp36m-win32.whl", hash = "sha256:6db823a18e7be1eb2a29c28961f2f01e84d3b449f06be7338d05ac8f90592cd5"},
+    {file = "pycairo-1.20.1-cp36-cp36m-win_amd64.whl", hash = "sha256:5525da2d8de912750dd157752aa96f1f0a42a437c5625e85b14c936b5c6305ae"},
+    {file = "pycairo-1.20.1-cp37-cp37m-win32.whl", hash = "sha256:c8c2bb933974d91c5d19e54b846d964de177e7bf33433bf34ac34c85f9b30e94"},
+    {file = "pycairo-1.20.1-cp37-cp37m-win_amd64.whl", hash = "sha256:9a32e4a3574a104aa876c35d5e71485dfd6986b18d045534c6ec510c44d5d6a7"},
+    {file = "pycairo-1.20.1-cp38-cp38-win32.whl", hash = "sha256:0d7a6754d410d911a46f00396bee4be96500ccd3d178e7e98aef1140e3dd67ae"},
+    {file = "pycairo-1.20.1-cp38-cp38-win_amd64.whl", hash = "sha256:b605151cdd23cedb31855b8666371b6e26b80f02753a52c8b8023a916b1df812"},
+    {file = "pycairo-1.20.1-cp39-cp39-win32.whl", hash = "sha256:e800486b51fffeb11ed867b4f2220d446e2a60a81a73b7c377123e0cbb72f49d"},
+    {file = "pycairo-1.20.1-cp39-cp39-win_amd64.whl", hash = "sha256:f123d3818e30b77b7209d70a6dcfd5b4e34885f9fa539d92dd7ff3e4e2037213"},
+    {file = "pycairo-1.20.1.tar.gz", hash = "sha256:1ee72b035b21a475e1ed648e26541b04e5d7e753d75ca79de8c583b25785531b"},
+]
+pygobject = [
+    {file = "PyGObject-3.42.0.tar.gz", hash = "sha256:b9803991ec0b0b4175e81fee0ad46090fa7af438fe169348a9b18ae53447afcd"},
+]
+pyparsing = [
+    {file = "pyparsing-3.0.6-py3-none-any.whl", hash = "sha256:04ff808a5b90911829c55c4e26f75fa5ca8a2f5f36aa3a51f68e27033341d3e4"},
+    {file = "pyparsing-3.0.6.tar.gz", hash = "sha256:d9bdec0013ef1eb5a84ab39a3b3868911598afa494f5faa038647101504e2b81"},
+]
+pytest = [
+    {file = "pytest-6.2.5-py3-none-any.whl", hash = "sha256:7310f8d27bc79ced999e760ca304d69f6ba6c6649c0b60fb0e04a4a77cacc134"},
+    {file = "pytest-6.2.5.tar.gz", hash = "sha256:131b36680866a76e6781d13f101efb86cf674ebb9762eb70d3082b6f29889e89"},
+]
+python-rtmidi = [
+    {file = "python-rtmidi-1.4.9.tar.gz", hash = "sha256:bfeb4ed99d0cccf6fa2837566907652ded7adc1c03b69f2160c9de4082301302"},
+    {file = "python_rtmidi-1.4.9-cp36-cp36m-macosx_10_6_intel.whl", hash = "sha256:8f7e154681c5d6ed7228ce8639708592da758ef4c0f575f7020854e07ca6478b"},
+    {file = "python_rtmidi-1.4.9-cp36-cp36m-win32.whl", hash = "sha256:6f495672ec76700400d4dff6f8848dbd52ca60301ed6011a6a1b3a9e95a7a07e"},
+    {file = "python_rtmidi-1.4.9-cp36-cp36m-win_amd64.whl", hash = "sha256:4d75788163327f6ac1f898c29e3b4527da83dbc5bab5a7e614b6a4385fde3231"},
+    {file = "python_rtmidi-1.4.9-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:d201516bb1c64511e7e4de50533f6b828072113e3c26f3f5b657f11b90252073"},
+    {file = "python_rtmidi-1.4.9-cp37-cp37m-win32.whl", hash = "sha256:0f5409e1b2e92cfe377710a0ea5c450c58fda8b52ec4bf4baf517aa731d9f6a6"},
+    {file = "python_rtmidi-1.4.9-cp37-cp37m-win_amd64.whl", hash = "sha256:3d4b7fdb477d8036d51cce281b303686114ae676f1c83693db963ab01db11cf5"},
+    {file = "python_rtmidi-1.4.9-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:5dad7a28035eea9e24aaab4fcb756cd2b78c5b14835aa64750cb4062f77ec169"},
+    {file = "python_rtmidi-1.4.9-cp38-cp38-win32.whl", hash = "sha256:7d27d0a70e85d991f1451f286416cf5ef4514292b027155bf91dcae0b8c0d5d2"},
+    {file = "python_rtmidi-1.4.9-cp38-cp38-win_amd64.whl", hash = "sha256:69907663e0f167fcf3fc1632a792419d0d9d00550f94dca39370ebda3bc999db"},
+    {file = "python_rtmidi-1.4.9-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:04bd95dd86fef3fe8d72838f719d31875f107a842127024bfe276617961eed5d"},
+    {file = "python_rtmidi-1.4.9-cp39-cp39-win32.whl", hash = "sha256:2286ab096a5603430ab1e1a664fe4d96acc40f9443f44c27e911dfad85ea3ac8"},
+    {file = "python_rtmidi-1.4.9-cp39-cp39-win_amd64.whl", hash = "sha256:54d40cb794a6b079105bfb923ab0b4d5f041e9eef5dc5cce25480e4c3e3fc2f6"},
+]
+six = [
+    {file = "six-1.16.0-py2.py3-none-any.whl", hash = "sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254"},
+    {file = "six-1.16.0.tar.gz", hash = "sha256:1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926"},
+]
+toml = [
+    {file = "toml-0.10.2-py2.py3-none-any.whl", hash = "sha256:806143ae5bfb6a3c6e736a764057db0e6a0e05e338b5630894a5f779cabb4f9b"},
+    {file = "toml-0.10.2.tar.gz", hash = "sha256:b3bda1d108d5dd99f4a20d24d9c348e91c4db7ab1b749200bded2f839ccbe68f"},
+]
+transitions = [
+    {file = "transitions-0.8.10-py2.py3-none-any.whl", hash = "sha256:2e9de3c453fafe3a8afef2c2bdc47e30a7a73e32d88f793ad4c1b6246f0cc364"},
+    {file = "transitions-0.8.10.tar.gz", hash = "sha256:b0385975a842e885c1a55c719d2f90164471665794d39d51f9eb3f11e1d9c8ac"},
+]
