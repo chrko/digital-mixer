@@ -19,7 +19,7 @@ def test_db_to_amplitude():
 
 
 def test_linspace():
-    assert linspace(1, 127, 9) == (1., 16.75, 32.5, 48.25, 64., 79.75, 95.5, 111.25, 127.)
+    assert linspace(1, 127, 9) == (1.0, 16.75, 32.5, 48.25, 64.0, 79.75, 95.5, 111.25, 127.0)
 
 
 @pytest.mark.parametrize("cached", [True, False])
@@ -47,7 +47,9 @@ def test_make_discrete_to_continuous_input(cached):
 
 
 def test_escape_pipeline_description():
-    print(escape_pipeline_description("""
+    print(
+        escape_pipeline_description(
+            """
     bin.(
         name=bin-test
         jackaudiosrc
@@ -110,4 +112,6 @@ def test_escape_pipeline_description():
     ! mix.
 
     mix. ! jackaudiosink connect=0 name=jacksink client-name=GstSink
-    """))
+    """
+        )
+    )

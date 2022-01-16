@@ -3,7 +3,7 @@ import enum
 
 class NoValue(enum.Enum):
     def __repr__(self):
-        return '<%s.%s>' % (self.__class__.__name__, self.name)
+        return "<%s.%s>" % (self.__class__.__name__, self.name)
 
 
 class AutoNumber(NoValue):

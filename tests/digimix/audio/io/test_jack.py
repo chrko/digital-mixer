@@ -6,11 +6,11 @@ from digimix.audio.utils import escape_pipeline_description
 class TestSingleJackClientInput:
     def test_pipeline_description(self):
         in_patch_panel = SingleJackClientInput(
-            'test',
+            "test",
             (
-                ('music', AudioMode.STEREO),
-                ('mic', AudioMode.MONO),
-            )
+                ("music", AudioMode.STEREO),
+                ("mic", AudioMode.MONO),
+            ),
         )
         desc = in_patch_panel.pipeline_description
         desc += f"""
@@ -33,11 +33,11 @@ class TestSingleJackClientInput:
 class TestMultiJackClientInput:
     def test_pipeline_description(self):
         in_patch_panel = MultiJackClientInput(
-            'test',
+            "test",
             (
-                ('music', AudioMode.STEREO),
-                ('mic', AudioMode.MONO),
-            )
+                ("music", AudioMode.STEREO),
+                ("mic", AudioMode.MONO),
+            ),
         )
         desc = in_patch_panel.pipeline_description
         desc += f"""
@@ -60,19 +60,19 @@ class TestMultiJackClientInput:
 class TestSingleJackClientOutput:
     def test_pipeline_description(self):
         in_patch_panel = SingleJackClientInput(
-            'test',
+            "test",
             (
-                ('music', AudioMode.STEREO),
-                ('mic', AudioMode.MONO),
-            )
+                ("music", AudioMode.STEREO),
+                ("mic", AudioMode.MONO),
+            ),
         )
         desc = in_patch_panel.pipeline_description
         out_patch_panel = SingleJackClientOutput(
-            'test',
+            "test",
             (
-                ('music', AudioMode.STEREO),
-                ('mic', AudioMode.MONO),
-            )
+                ("music", AudioMode.STEREO),
+                ("mic", AudioMode.MONO),
+            ),
         )
         desc += out_patch_panel.pipeline_description
         desc += f"""

@@ -32,13 +32,11 @@ default_channel_order = (
     GstAudio.AudioChannelPosition.WIDE_RIGHT,
     GstAudio.AudioChannelPosition.SURROUND_LEFT,
     GstAudio.AudioChannelPosition.SURROUND_RIGHT,
-    GstAudio.AudioChannelPosition.INVALID
+    GstAudio.AudioChannelPosition.INVALID,
 )
 # https://gitlab.freedesktop.org/gstreamer/gst-plugins-good/-/blob/master/ext/jack/gstjackutil.c#L23-84
 jack_default_positions = (
-    (
-        GstAudio.AudioChannelPosition.MONO,
-    ),
+    (GstAudio.AudioChannelPosition.MONO,),
     (
         GstAudio.AudioChannelPosition.FRONT_LEFT,
         GstAudio.AudioChannelPosition.FRONT_RIGHT,

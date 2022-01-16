@@ -5,12 +5,12 @@ import os
 
 from digimix.audio import Gst
 
-log = logging.getLogger('vocto.debug')
+log = logging.getLogger("vocto.debug")
 
 
 def gst_generate_dot(pipeline, name):
-    if 'GST_DEBUG_DUMP_DOT_DIR' in os.environ:
-        dotfile = os.path.join(os.environ['GST_DEBUG_DUMP_DOT_DIR'], "%s.dot" % name)
+    if "GST_DEBUG_DUMP_DOT_DIR" in os.environ:
+        dotfile = os.path.join(os.environ["GST_DEBUG_DUMP_DOT_DIR"], "%s.dot" % name)
         log.debug("Generating DOT image of pipeline '{name}' into '{file}'".format(name=name, file=dotfile))
         Gst.debug_bin_to_dot_file(pipeline, Gst.DebugGraphDetails(15), name)
 
@@ -21,7 +21,7 @@ gst_log_messages_repeat = 0
 
 
 def gst_log_messages(level):
-    gst_log = logging.getLogger('Gst')
+    gst_log = logging.getLogger("Gst")
 
     def log(level, msg):
         if level == Gst.DebugLevel.WARNING:
@@ -41,12 +41,18 @@ def gst_log_messages(level):
         msg = message.get()
         if gst_log_messages_lastmessage != msg:
             if gst_log_messages_repeat > 2:
-                log(gst_log_messages_lastlevel, "%s [REPEATING %d TIMES]" % (gst_log_messages_lastmessage, gst_log_messages_repeat))
+                log(
+                    gst_log_messages_lastlevel,
+                    "%s [REPEATING %d TIMES]" % (gst_log_messages_lastmessage, gst_log_messages_repeat),
+                )
 
             gst_log_messages_lastmessage = msg
             gst_log_messages_repeat = 0
             gst_log_messages_lastlevel = level
-            log(level, "%s: %s (in function %s() in file %s:%d)" % (object.name if object else "", msg, function, file, line))
+            log(
+                level,
+                "%s: %s (in function %s() in file %s:%d)" % (object.name if object else "", msg, function, file, line),
+            )
         else:
             gst_log_messages_repeat += 1
 

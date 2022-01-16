@@ -25,7 +25,7 @@ class ContinuousControlReadOnly(CallbackBase):
 
     def __init__(
         self,
-        name: str = '',
+        name: str = "",
         initial_value: int = 0,
         min_value: int = 0,
         max_value: int = 127,
@@ -88,8 +88,7 @@ class ContinuousControlReadOnly(CallbackBase):
         with self._map_value_range_lock:
             return self._map_min_value + (
                 Fraction(self._value - self._min_value, self._max_value - self._min_value)
-                *
-                (self._map_max_value - self._map_min_value)
+                * (self._map_max_value - self._map_min_value)
             )
 
     @property
@@ -102,26 +101,24 @@ class ContinuousControlReadOnly(CallbackBase):
             self._behaviour = new_value
 
     def __repr__(self) -> str:
-        return f'<{self.__class__.__name__} ' \
-               f'name={self.name} ' \
-               f'value={self.value} ' \
-               f'mapped_value={self.mapped_value} ' \
-               f'behaviour={self.behaviour}>'
+        return (
+            f"<{self.__class__.__name__} "
+            f"name={self.name} "
+            f"value={self.value} "
+            f"mapped_value={self.mapped_value} "
+            f"behaviour={self.behaviour}>"
+        )
 
     def midi_message_extractor(self, msg: Message):
-        if msg.type == 'control_change':
+        if msg.type == "control_change":
             self.value = msg.value
 
 
 class ButtonState(State):
-    def __init__(self, name: str, pressed: bool, active: bool, on_enter=None, on_exit=None,
-                 ignore_invalid_triggers=None):
-        super().__init__(
-            name=name,
-            on_enter=on_enter,
-            on_exit=on_exit,
-            ignore_invalid_triggers=ignore_invalid_triggers
-        )
+    def __init__(
+        self, name: str, pressed: bool, active: bool, on_enter=None, on_exit=None, ignore_invalid_triggers=None
+    ):
+        super().__init__(name=name, on_enter=on_enter, on_exit=on_exit, ignore_invalid_triggers=ignore_invalid_triggers)
         self._pressed = pressed
         self._active = active
 
@@ -134,11 +131,7 @@ class ButtonState(State):
         return self._active
 
     def __eq__(self, other):
-        return (
-            isinstance(other, type(self))
-            and self._active is other._active
-            and self._pressed is other._pressed
-        )
+        return isinstance(other, type(self)) and self._active is other._active and self._pressed is other._pressed
 
 
 class Button(CallbackBase):
@@ -152,80 +145,80 @@ class Button(CallbackBase):
 
     MACHINE_DICT = {
         Mode.MOMENTARY: Machine(
-            name='ButtonMomentaryMachine',
+            name="ButtonMomentaryMachine",
             model=None,
             states=[
-                ButtonState(name='released', pressed=False, active=False),
-                ButtonState(name='pressed', pressed=True, active=True),
+                ButtonState(name="released", pressed=False, active=False),
+                ButtonState(name="pressed", pressed=True, active=True),
             ],
-            initial='released',
+            initial="released",
             transitions=[
-                {'source': 'released', 'trigger': 'press', 'dest': 'pressed'},
-                {'source': 'pressed', 'trigger': 'release', 'dest': 'released'},
+                {"source": "released", "trigger": "press", "dest": "pressed"},
+                {"source": "pressed", "trigger": "release", "dest": "released"},
             ],
             send_event=True,
             auto_transitions=False,
             ordered_transitions=False,
             ignore_invalid_triggers=True,
             before_state_change=None,
-            after_state_change='_trigger_callbacks',
+            after_state_change="_trigger_callbacks",
             queued=False,
         ),
         Mode.TOGGLE: Machine(
-            name='ButtonToggleMachine',
+            name="ButtonToggleMachine",
             model=None,
             states=[
-                ButtonState(name='released_inactive', pressed=False, active=False),
-                ButtonState(name='released_active', pressed=False, active=True),
-                ButtonState(name='pressed_active', pressed=True, active=True),
-                ButtonState(name='pressed_inactive', pressed=True, active=False),
+                ButtonState(name="released_inactive", pressed=False, active=False),
+                ButtonState(name="released_active", pressed=False, active=True),
+                ButtonState(name="pressed_active", pressed=True, active=True),
+                ButtonState(name="pressed_inactive", pressed=True, active=False),
             ],
-            initial='released_inactive',
+            initial="released_inactive",
             transitions=[
-                {'source': 'released_inactive', 'trigger': 'press', 'dest': 'pressed_active'},
-                {'source': 'pressed_active', 'trigger': 'release', 'dest': 'released_active'},
-                {'source': 'released_active', 'trigger': 'press', 'dest': 'pressed_inactive'},
-                {'source': 'pressed_inactive', 'trigger': 'release', 'dest': 'released_inactive'},
+                {"source": "released_inactive", "trigger": "press", "dest": "pressed_active"},
+                {"source": "pressed_active", "trigger": "release", "dest": "released_active"},
+                {"source": "released_active", "trigger": "press", "dest": "pressed_inactive"},
+                {"source": "pressed_inactive", "trigger": "release", "dest": "released_inactive"},
             ],
             send_event=True,
             auto_transitions=False,
             ordered_transitions=False,
             ignore_invalid_triggers=True,
             before_state_change=None,
-            after_state_change='_trigger_callbacks',
+            after_state_change="_trigger_callbacks",
             queued=False,
         ),
         Mode.TIMED_TOGGLE: Machine(
-            name='ButtonTimedToggleMachine',
+            name="ButtonTimedToggleMachine",
             model=None,
             states=[
-                ButtonState(name='released_inactive', pressed=False, active=False),
+                ButtonState(name="released_inactive", pressed=False, active=False),
                 ButtonState(
-                    name='toggle_pressed_active',
+                    name="toggle_pressed_active",
                     pressed=True,
                     active=True,
-                    on_enter='_start_momentary_timeout',
-                    on_exit='_stop_momentary_timeout'
+                    on_enter="_start_momentary_timeout",
+                    on_exit="_stop_momentary_timeout",
                 ),
-                ButtonState(name='toggle_released_active', pressed=False, active=True),
-                ButtonState(name='toggle_pressed_inactive', pressed=True, active=False),
-                ButtonState(name='momentary_pressed_active', pressed=True, active=True),
+                ButtonState(name="toggle_released_active", pressed=False, active=True),
+                ButtonState(name="toggle_pressed_inactive", pressed=True, active=False),
+                ButtonState(name="momentary_pressed_active", pressed=True, active=True),
             ],
-            initial='released_inactive',
+            initial="released_inactive",
             transitions=[
-                {'source': 'released_inactive', 'trigger': 'press', 'dest': 'toggle_pressed_active'},
-                {'source': 'toggle_pressed_active', 'trigger': 'release', 'dest': 'toggle_released_active'},
-                {'source': 'toggle_released_active', 'trigger': 'press', 'dest': 'toggle_pressed_inactive'},
-                {'source': 'toggle_pressed_inactive', 'trigger': 'release', 'dest': 'released_inactive'},
-                {'source': 'toggle_pressed_active', 'trigger': 'momentary_timeout', 'dest': 'momentary_pressed_active'},
-                {'source': 'momentary_pressed_active', 'trigger': 'release', 'dest': 'released_inactive'},
+                {"source": "released_inactive", "trigger": "press", "dest": "toggle_pressed_active"},
+                {"source": "toggle_pressed_active", "trigger": "release", "dest": "toggle_released_active"},
+                {"source": "toggle_released_active", "trigger": "press", "dest": "toggle_pressed_inactive"},
+                {"source": "toggle_pressed_inactive", "trigger": "release", "dest": "released_inactive"},
+                {"source": "toggle_pressed_active", "trigger": "momentary_timeout", "dest": "momentary_pressed_active"},
+                {"source": "momentary_pressed_active", "trigger": "release", "dest": "released_inactive"},
             ],
             send_event=True,
             auto_transitions=False,
             ordered_transitions=False,
             ignore_invalid_triggers=True,
             before_state_change=None,
-            after_state_change='_trigger_callbacks',
+            after_state_change="_trigger_callbacks",
             queued=False,
         ),
     }
@@ -237,7 +230,7 @@ class Button(CallbackBase):
 
     def __init__(
         self,
-        name: str = '',
+        name: str = "",
         mode: Mode = Mode.TOGGLE,
     ):
         super().__init__()
@@ -290,8 +283,10 @@ class Button(CallbackBase):
         return self._machine.get_state(self.state).active
 
     def __repr__(self) -> str:
-        return f'<{self.__class__.__name__} ' \
-               f'name={self.name} ' \
-               f'pressed={self.pressed} ' \
-               f'active={self.active} ' \
-               f'mode={self._mode}>'
+        return (
+            f"<{self.__class__.__name__} "
+            f"name={self.name} "
+            f"pressed={self.pressed} "
+            f"active={self.active} "
+            f"mode={self._mode}>"
+        )

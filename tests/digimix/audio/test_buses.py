@@ -13,7 +13,7 @@ class TestMasterBus:
                 ("mic", AudioMode.MONO),
                 ("teams", AudioMode.STEREO),
                 ("music", AudioMode.STEREO),
-            )
+            ),
         )
         desc = ins.pipeline_description
 

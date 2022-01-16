@@ -29,13 +29,13 @@ class FaderChannel(GstElement):
         self._phase_invert = bool(phase_invert)
         self._gain_db = float(gain_db)
 
-        self._pan: float = 0.
+        self._pan: float = 0.0
         self.pan = pan
 
         self._pan_method: AudioPanoramaMethods = AudioPanoramaMethods.PSYCHOACOUSTIC
         self.pan_method = pan_method
 
-        self._fader_db: float = 0.
+        self._fader_db: float = 0.0
         self._cut: bool = False
 
     @property

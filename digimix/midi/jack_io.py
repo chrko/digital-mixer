@@ -11,20 +11,14 @@ class RtMidiJackIO:
     def __init__(self, client_name_prefix: str):
         self._msg_queue_in = SimpleQueue()
 
-        self._in_client = rtmidi.MidiIn(
-            rtapi=self.API,
-            name=client_name_prefix + 'In'
-        )
+        self._in_client = rtmidi.MidiIn(rtapi=self.API, name=client_name_prefix + "In")
         self._in_client.ignore_types(False, True, True)
-        self._in_client.open_virtual_port(name='Midi In')
+        self._in_client.open_virtual_port(name="Midi In")
         self._in_client.set_callback(self._rtmidi_input_callback)
 
         self._send_lock = threading.RLock()
-        self._out_client = rtmidi.MidiOut(
-            rtapi=self.API,
-            name=client_name_prefix + 'Out'
-        )
-        self._out_client.open_virtual_port(name='Midi Out')
+        self._out_client = rtmidi.MidiOut(rtapi=self.API, name=client_name_prefix + "Out")
+        self._out_client.open_virtual_port(name="Midi Out")
 
     def _rtmidi_input_callback(self, msg_data, _):
         try:

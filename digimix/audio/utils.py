@@ -6,7 +6,7 @@ _DIGITS_AMPLITUDE_CALC = 4
 
 
 def precision_round(number, digits):
-    power = f"{number:e}".split('e')[1]
+    power = f"{number:e}".split("e")[1]
     return round(number, -(int(power) - digits + 1))
 
 
@@ -31,7 +31,7 @@ def make_discrete_to_continuous(
     x: tuple[int, int] = (0, 127),
     y: tuple[int, ...] = (-100, -70, -50, -30, -20, -10, -5, 0),
     edge_points: tuple[tuple[int, int], ...] = ((0, -math.inf),),
-    cached=True
+    cached=True,
 ):
     points = tuple(zip(linspace(x[0], x[1], len(y)), y))
     concrete_points = dict(chain(points, edge_points))
@@ -64,4 +64,4 @@ default_linear_fader_midi_to_db = make_discrete_to_continuous()
 
 
 def escape_pipeline_description(desc: str) -> str:
-    return ' '.join(shlex.quote(arg) for arg in desc.replace('\n', ' ').split())
+    return " ".join(shlex.quote(arg) for arg in desc.replace("\n", " ").split())

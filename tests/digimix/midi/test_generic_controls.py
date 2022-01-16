@@ -54,7 +54,9 @@ class TestContinuousControlReadOnly:
         assert cc.mapped_value == 1
 
     def test_mapped_value_2(self):
-        cc = ContinuousControlReadOnly(min_value=-127, max_value=127, initial_value=-127, map_min_value=0, map_max_value=1)
+        cc = ContinuousControlReadOnly(
+            min_value=-127, max_value=127, initial_value=-127, map_min_value=0, map_max_value=1
+        )
         assert cc.mapped_value == 0
         cc.value = 127
         assert cc.mapped_value == 1
@@ -62,7 +64,9 @@ class TestContinuousControlReadOnly:
         assert cc.mapped_value == 0.5
 
     def test_mapped_value_3(self):
-        cc = ContinuousControlReadOnly(min_value=-127, max_value=127, initial_value=-127, map_min_value=-1, map_max_value=1)
+        cc = ContinuousControlReadOnly(
+            min_value=-127, max_value=127, initial_value=-127, map_min_value=-1, map_max_value=1
+        )
         assert cc.mapped_value == -1
         cc.value = 127
         assert cc.mapped_value == 1
@@ -79,11 +83,11 @@ class TestButton:
 
     def test_mode_momentary(self):
         b = Button(mode=Button.Mode.MOMENTARY)
-        assert b.state == 'released'
+        assert b.state == "released"
         b.press()
-        assert b.state == 'pressed'
+        assert b.state == "pressed"
         b.release()
-        assert b.state == 'released'
+        assert b.state == "released"
 
     def test_mode_toggle(self):
         b = Button(mode=Button.Mode.TOGGLE)
