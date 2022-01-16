@@ -5,7 +5,8 @@ from digimix.audio import GLib, Gst
 from digimix.audio.base import AudioMode
 from digimix.audio.buses import MasterBus
 from digimix.audio.channels import FaderChannel
-from digimix.audio.io.jack import SingleJackClientInput, SingleJackClientOutput
+from digimix.audio.io.jack import SingleJackClientOutput
+from digimix.audio.io.pipewire import PipewireInput
 from digimix.audio.utils import default_linear_fader_midi_to_db
 from digimix.midi.devices.akai_midimix import MidiMix
 from digimix.midi.jack_io import RtMidiJackIO
@@ -15,7 +16,7 @@ if __name__ == '__main__':
     midi_io = RtMidiJackIO('DigitalMixerControl')
     hw = MidiMix(midi_io)
 
-    src = SingleJackClientInput(
+    src = PipewireInput(
         name="main_in",
         conf=(
             ("mic", AudioMode.MONO),
