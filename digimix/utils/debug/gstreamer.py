@@ -5,7 +5,7 @@ import os
 
 from digimix.audio import Gst
 
-log = logging.getLogger("vocto.debug")
+log = logging.getLogger(__name__)
 
 
 def gst_generate_dot(pipeline, name):

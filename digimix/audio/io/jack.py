@@ -16,11 +16,15 @@ class JackClientInput(Input, JackClient, ABC):
     def __init__(self, name: str, conf: typing.Tuple[typing.Tuple[str, AudioMode], ...]):
         super().__init__(name)
         self._conf = conf
-        self._src = [f"jack-src-{name}" for name, _ in conf]
+        self._src_dict = {name: f"jack-src-{name}" for name, _ in conf}
 
     @property
     def src(self) -> list[str]:
-        return self._src
+        return list(self._src_dict.values())
+
+    @property
+    def src_dict(self) -> dict[str, str]:
+        return self._src_dict
 
     def attach_pipeline(self, pipeline: Gst.Element):
         pass
@@ -169,11 +173,15 @@ class JackClientOutput(Output, JackClient, ABC):
     def __init__(self, name: str, conf: typing.Tuple[typing.Tuple[str, AudioMode], ...]):
         super().__init__(name)
         self._conf = conf
-        self._sink = [f"jack-sink-{name}" for name, _ in conf]
+        self._sink_dict = {name: f"jack-sink-{name}" for name, _ in conf}
 
     @property
     def sink(self) -> list[str]:
-        return self._sink
+        return list(self._sink_dict.values())
+
+    @property
+    def sink_dict(self) -> dict[str, str]:
+        return self._sink_dict
 
     def attach_pipeline(self, pipeline: Gst.Pipeline):
         pass

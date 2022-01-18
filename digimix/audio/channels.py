@@ -24,7 +24,11 @@ class FaderChannel(GstElement):
         super().__init__(name)
 
         self._pipeline: typing.Optional[Gst.Pipeline] = None
-        self._fader: typing.Optional[Gst.Element] = None
+
+        self._gain_element: typing.Optional[Gst.Element] = None
+        self._level_element: typing.Optional[Gst.Element] = None
+        self._fader_element: typing.Optional[Gst.Element] = None
+        self._pan_element: typing.Optional[Gst.Element] = None
 
         self._phase_invert = bool(phase_invert)
         self._gain_db = float(gain_db)
@@ -46,9 +50,8 @@ class FaderChannel(GstElement):
     def gain_db(self, new_gain_db: float):
         new_gain_db = float(new_gain_db)
         self._gain_db = new_gain_db
-        if self._pipeline is not None:
-            gain = self._pipeline.get_by_name(f"fader_channel-gain-{self.name}")  # type: Gst.Element
-            gain.set_property("amplification", self.gain_amplitude)
+        if self._gain_element is not None:
+            self._gain_element.set_property("amplification", self.gain_amplitude)
 
     @property
     def gain_amplitude(self) -> float:
@@ -67,9 +70,8 @@ class FaderChannel(GstElement):
         if not -1.0 <= new_pan <= 1.0:
             raise ValueError(f"pan must be between [-1, 1]. Given {new_pan}")
         self._pan = new_pan
-        if self._pipeline is not None:
-            panorama = self._pipeline.get_by_name(f"fader_channel-pan-{self.name}")  # type: Gst.Element
-            panorama.set_property("panorama", self._pan)
+        if self._pan_element is not None:
+            self._pan_element.set_property("panorama", self._pan)
 
     @property
     def pan_method(self) -> AudioPanoramaMethods:
@@ -80,9 +82,8 @@ class FaderChannel(GstElement):
         if new_pan_method not in AudioPanoramaMethods:
             raise ValueError(f"Given pan_method is not a supported AudioPanoramaMethods: {new_pan_method}")
         self._pan_method = new_pan_method
-        if self._pipeline is not None:
-            panorama = self._pipeline.get_by_name(f"fader_channel-pan-{self.name}")  # type: Gst.Element
-            panorama.set_property("method", int(self._pan_method))
+        if self._pan_element is not None:
+            self._pan_element.set_property("method", int(self._pan_method))
 
     @property
     def fader_db(self) -> float:
@@ -91,8 +92,8 @@ class FaderChannel(GstElement):
     @fader_db.setter
     def fader_db(self, new_fader_db: float):
         self._fader_db = float(new_fader_db)
-        if self._fader is not None:
-            self._fader.set_property("volume", self.fader_amplitude)
+        if self._fader_element is not None:
+            self._fader_element.set_property("volume", self.fader_amplitude)
 
     @property
     def fader_amplitude(self) -> float:
@@ -108,8 +109,9 @@ class FaderChannel(GstElement):
 
     @cut.setter
     def cut(self, new_cut: bool):
-        new_cut = bool(new_cut)
-        self._fader.set_property("mute", new_cut)
+        self._cut = bool(new_cut)
+        if self._fader_element is not None:
+            self._fader_element.set_property("mute", self._cut)
 
     @property
     def pipeline_description(self) -> str:
@@ -134,6 +136,8 @@ class FaderChannel(GstElement):
                 name=fader_channel-level-{self.name}
             ! volume
                 name=fader_channel-fader-{self.name}
+                volume={self.fader_amplitude}
+                mute={self._cut}
             ! tee
                 name=fader_channel-post_fader-{self.name}
             ! audiopanorama
@@ -151,7 +155,10 @@ class FaderChannel(GstElement):
 
     def attach_pipeline(self, pipeline: Gst.Pipeline):
         self._pipeline = pipeline
-        self._fader = pipeline.get_by_name(f"fader_channel-fader-{self.name}")
+        self._gain_element = pipeline.get_by_name(f"fader_channel-gain-{self.name}")
+        self._level_element = pipeline.get_by_name(f"fader_channel-level-{self.name}")
+        self._fader_element = pipeline.get_by_name(f"fader_channel-fader-{self.name}")
+        self._pan_element = pipeline.get_by_name(f"fader_channel-pan-{self.name}")
 
     @property
     def sink(self) -> list[str]:

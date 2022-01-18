@@ -5,10 +5,10 @@ from digimix.audio import GLib, Gst
 from digimix.audio.base import AudioMode
 from digimix.audio.buses import MasterBus
 from digimix.audio.channels import FaderChannel
-from digimix.audio.io.jack import SingleJackClientOutput
-from digimix.audio.io.pipewire import PipewireInput
+from digimix.audio.io.jack import MultiJackClientInput, SingleJackClientOutput
 from digimix.audio.utils import default_linear_fader_midi_to_db
 from digimix.midi.devices.akai_midimix import MidiMix
+from digimix.midi.generic_controls import Button
 from digimix.midi.jack_io import RtMidiJackIO
 from digimix.utils.debug.gstreamer import gst_generate_dot
 
@@ -16,7 +16,7 @@ if __name__ == "__main__":
     midi_io = RtMidiJackIO("DigitalMixerControl")
     hw = MidiMix(midi_io)
 
-    src = PipewireInput(
+    src = MultiJackClientInput(
         name="main_in",
         conf=(
             ("mic", AudioMode.MONO),
@@ -43,7 +43,14 @@ if __name__ == "__main__":
         ],
     )
 
-    out = SingleJackClientOutput(name="main_out", conf=(("main", AudioMode.STEREO),))
+    out = SingleJackClientOutput(
+        name="main_out",
+        conf=(
+            ("main", AudioMode.STEREO),
+            ("to_teams", AudioMode.STEREO),
+            ("to_headphone", AudioMode.STEREO),
+        ),
+    )
 
     els = [
         src,
@@ -56,11 +63,11 @@ if __name__ == "__main__":
     ]
 
     p_descs = [el.pipeline_description for el in els] + [
-        f"{src.src[0]}. ! {mic.sink[0]}.",
-        f"{src.src[1]}. ! {ms_teams.sink[0]}.",
-        f"{src.src[2]}. ! {music.sink[0]}.",
-        f"{src.src[3]}. ! {other.sink[0]}.",
-        f"{master.src[0]}. ! {out.sink[0]}.",
+        f"{src.src_dict['mic']}. ! {mic.sink[0]}.",
+        f"{src.src_dict['ms_teams']}. ! {ms_teams.sink[0]}.",
+        f"{src.src_dict['music']}. ! {music.sink[0]}.",
+        f"{src.src_dict['other']}. ! {other.sink[0]}.",
+        f"{master.src[0]}. ! {out.sink_dict['main']}.",
     ]
 
     desc = "\n".join(p_descs)
@@ -80,10 +87,21 @@ if __name__ == "__main__":
 
         return callback
 
+    def mute_button_callback_maker(fader: FaderChannel):
+        def callback(caller: Button, *_, **__):
+            fader.cut = caller.active
+
+        return callback
+
     hw.faders[0].add_callback(fader_channel_fader_callback_maker(mic))
     hw.faders[1].add_callback(fader_channel_fader_callback_maker(ms_teams))
     hw.faders[2].add_callback(fader_channel_fader_callback_maker(music))
     hw.faders[3].add_callback(fader_channel_fader_callback_maker(other))
+
+    hw.button_matrix[0][0].add_callback(mute_button_callback_maker(mic))
+    hw.button_matrix[0][1].add_callback(mute_button_callback_maker(ms_teams))
+    hw.button_matrix[0][2].add_callback(mute_button_callback_maker(music))
+    hw.button_matrix[0][3].add_callback(mute_button_callback_maker(other))
 
     def dotter():
         while True:
@@ -91,7 +109,7 @@ if __name__ == "__main__":
             time.sleep(5)
 
     dotter_thread = threading.Thread(name="Dotter", target=dotter, daemon=True)
-    # dotter_thread.start()
+    dotter_thread.start()
 
     try:
         hw.start_feeder()
